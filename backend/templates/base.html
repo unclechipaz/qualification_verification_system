@@ -1,3 +1,4 @@
+{% load static %}
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -9,6 +10,7 @@
     <!-- FontAwesome Icons -->
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css" rel="stylesheet">
     <!-- Custom MSU Theme CSS -->
+    <link href="{% static 'css/style.css' %}" rel="stylesheet">
     <style>
         :root {
             --msu-navy: #002B49;
@@ -84,30 +86,6 @@
             box-shadow: 0 8px 25px rgba(0, 43, 73, 0.12);
         }
 
-        .badge-verified {
-            background-color: #198754;
-            color: white;
-            font-size: 0.9rem;
-            padding: 6px 12px;
-            border-radius: 20px;
-        }
-
-        .badge-revoked {
-            background-color: #dc3545;
-            color: white;
-            font-size: 0.9rem;
-            padding: 6px 12px;
-            border-radius: 20px;
-        }
-
-        .badge-pending {
-            background-color: #ffc107;
-            color: #000;
-            font-size: 0.9rem;
-            padding: 6px 12px;
-            border-radius: 20px;
-        }
-
         footer {
             margin-top: auto;
             background-color: var(--msu-navy);
@@ -122,18 +100,25 @@
             box-shadow: 0 8px 32px 0 rgba(0, 43, 73, 0.15);
             border: 1px solid rgba(212, 175, 55, 0.2);
         }
+
+        .msu-brand-logo {
+            height: 52px;
+            width: auto;
+            object-fit: contain;
+            filter: drop-shadow(0 2px 4px rgba(0,0,0,0.3));
+        }
     </style>
     {% block extra_css %}{% endblock %}
 </head>
 <body>
 
     <!-- Header Navigation Bar -->
-    <nav class="navbar navbar-expand-lg navbar-dark navbar-msu py-3 sticky-top">
+    <nav class="navbar navbar-expand-lg navbar-dark navbar-msu py-2 sticky-top">
         <div class="container">
-            <a class="navbar-brand d-flex align-items-center" href="{% url 'home' %}">
-                <i class="fa-solid fa-graduation-cap fa-2x text-warning me-3"></i>
+            <a class="navbar-brand d-flex align-items-center me-4" href="{% url 'home' %}">
+                <img src="{% static 'img/msu_logo.svg' %}" alt="Midlands State University Logo" class="msu-brand-logo me-3">
                 <div>
-                    <span class="navbar-brand-title">MIDLANDS STATE UNIVERSITY</span>
+                    <span class="navbar-brand-title fs-5">MIDLANDS STATE UNIVERSITY</span>
                     <span class="navbar-brand-subtitle">Qualification Verification System (MSU QVS)</span>
                 </div>
             </a>
@@ -211,9 +196,12 @@
     <footer class="py-4 text-center">
         <div class="container">
             <div class="row align-items-center">
-                <div class="col-md-6 text-md-start mb-2 mb-md-0">
-                    <h6 class="text-white mb-1"><i class="fa-solid fa-graduation-cap text-warning me-2"></i> Midlands State University</h6>
-                    <small>Official Qualification Verification Portal & Register of Academic Awards.</small>
+                <div class="col-md-6 text-md-start mb-2 mb-md-0 d-flex align-items-center">
+                    <img src="{% static 'img/msu_logo.svg' %}" alt="MSU Crest" style="height: 40px;" class="me-3">
+                    <div>
+                        <h6 class="text-white mb-0">Midlands State University</h6>
+                        <small>Official Qualification Verification Portal & Register of Academic Awards.</small>
+                    </div>
                 </div>
                 <div class="col-md-6 text-md-end">
                     <small>&copy; 2026 Midlands State University. Developed for SE Group Assignment.</small><br>
@@ -225,6 +213,7 @@
 
     <!-- Bootstrap 5 JS Bundle -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="{% static 'js/main.js' %}"></script>
     {% block extra_js %}{% endblock %}
 </body>
 </html>
