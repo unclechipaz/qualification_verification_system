@@ -15,8 +15,36 @@
                 <div class="position-absolute top-0 end-0 p-3"><i class="fa-solid fa-certificate fa-3x text-warning"></i></div>
 
                 <div class="text-center py-2">
-                    <!-- Official MSU Crest Logo -->
-                    <img src="{% static 'img/msu_logo.svg' %}" alt="Midlands State University Crest Logo" class="img-fluid mb-3" style="max-height: 120px;">
+                    <!-- Inline High Resolution MSU Crest Logo -->
+                    <div class="d-flex justify-content-center mb-3">
+                        <svg viewBox="0 0 500 500" style="height: 120px; width: auto;" xmlns="http://www.w3.org/2000/svg">
+                            <defs>
+                                <path id="certTextArc" d="M 60,250 A 190,190 0 0,1 440,250" fill="none" />
+                            </defs>
+                            <text font-family="Arial, sans-serif" font-weight="bold" font-size="34" fill="#000000" letter-spacing="2">
+                                <textPath href="#certTextArc" startOffset="50%" text-anchor="middle">MIDLANDS STATE UNIVERSITY</textPath>
+                            </text>
+                            <g transform="translate(140, 140)">
+                                <path d="M 10 10 L 210 10 L 210 120 C 210 180 110 220 110 220 C 110 220 10 180 10 120 Z" fill="#FFD54F" stroke="#000000" stroke-width="4" />
+                                <path d="M 16 16 L 204 16 L 204 118 C 204 174 110 212 110 212 C 110 212 16 174 16 118 Z" fill="#FFFFFF" stroke="#000000" stroke-width="2" />
+                                <path d="M 16 16 L 204 16 L 204 114 L 16 114 Z" fill="#81D4FA" stroke="#000000" stroke-width="2" />
+                                <polygon points="110,25 116,42 134,42 120,53 125,70 110,60 95,70 100,53 86,42 104,42" fill="#E53935" />
+                                <path d="M 105,32 Q 110,28 115,32 Q 118,38 112,45 L 108,55 Q 104,45 105,32 Z" fill="#FFD54F" stroke="#000000" stroke-width="1.5" />
+                                <g transform="translate(80, 60)">
+                                    <polygon points="30,10 60,0 30,-10 0,0" fill="#29B6F6" stroke="#000000" stroke-width="1.5" />
+                                    <polygon points="30,10 48,5 48,18 30,23 12,18 12,5" fill="#0288D1" stroke="#000000" stroke-width="1.5" />
+                                    <rect x="15" y="-5" width="40" height="10" rx="3" fill="#FFFFFF" stroke="#000" stroke-width="1.5" transform="rotate(-25 35 0)" />
+                                </g>
+                                <path d="M 16 114 L 110 114 L 110 212 C 110 212 16 174 16 118 Z" fill="#FFCA28" stroke="#000000" stroke-width="2" />
+                                <path d="M 110 114 L 204 114 L 204 118 C 204 174 110 212 110 212 Z" fill="#FFF9C4" stroke="#000000" stroke-width="2" />
+                                <path d="M 130 180 Q 150 140 170 175 Q 190 150 204 160 L 204 114 L 110 114 Z" fill="#8D6E63" opacity="0.7" />
+                            </g>
+                            <g transform="translate(100, 330)">
+                                <path d="M 30 30 Q 150 60 270 30 L 285 55 Q 150 85 15 55 Z" fill="#FFD54F" stroke="#000000" stroke-width="2" />
+                                <text x="150" y="52" font-family="'Georgia', serif" font-weight="bold" font-size="16" fill="#000000" text-anchor="middle" font-style="italic">Our Hands Our Minds Our Destiny</text>
+                            </g>
+                        </svg>
+                    </div>
 
                     <h1 class="display-5 fw-bold text-navy mb-1" style="font-family: 'Times New Roman', serif;">MIDLANDS STATE UNIVERSITY</h1>
                     <h5 class="text-warning fw-bold text-uppercase mb-4" style="letter-spacing: 2px;">Gweru, Zimbabwe</h5>

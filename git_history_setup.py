@@ -39,7 +39,7 @@ def main():
         ("main", "Initial Django project structure and configuration"),
         ("main", "Add requirements.txt and Python 3.13 dependencies"),
         ("main", "Configure settings.py and database fallback"),
-        ("main", "Add official Midlands State University crest logo SVG asset"),
+        ("main", "Add bulletproof inline SVG MSU Crest Logo component"),
         ("main", "Add vercel.json deployment configuration"),
         ("main", "Add root index.py Vercel serverless function entrypoint"),
         ("main", "Add CONTRIBUTING.md with team member assignments"),
@@ -64,7 +64,7 @@ def main():
         ("feature/qualification-module", "Create Qualification and Certificate models"),
         ("feature/qualification-module", "Add digital signature SHA-256 hash generation"),
         ("feature/qualification-module", "Implement QR Code generator utility"),
-        ("feature/qualification-module", "Create printable degree certificate template with official MSU logo"),
+        ("feature/qualification-module", "Create printable degree certificate template with MSU crest"),
         ("feature/qualification-module", "Add Certificate DRF API endpoint"),
 
         # feature/verification
@@ -126,7 +126,7 @@ def main():
     run_git(["checkout", "main"])
     run_git(["merge", "develop", "--no-ff", "-m", "Release v1.0.0: Production-Ready MSU Qualification Verification System"])
 
-    print("\nGit History initialized with official MSU Crest Logo!")
+    print("\nGit History initialized with inline SVG logo!")
 
 if __name__ == "__main__":
     main()
