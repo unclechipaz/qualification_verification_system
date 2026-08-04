@@ -30,6 +30,7 @@ def main():
         ("main", "Initial Django project structure and configuration"),
         ("main", "Add requirements.txt and Python 3.13 dependencies"),
         ("main", "Configure settings.py and database fallback"),
+        ("main", "Add vercel.json deployment configuration"),
         ("main", "Add CONTRIBUTING.md with team member assignments"),
         ("main", "Add README.md with system architecture overview"),
 
@@ -86,10 +87,11 @@ def main():
         ("feature/testing", "Add verification engine tests"),
         ("feature/testing", "Add AI fraud detection test cases"),
 
-        # DevOps
+        # DevOps & Vercel
         ("main", "Create Dockerfile for Python 3.13 containerization"),
         ("main", "Add docker-compose.yml for Django and PostgreSQL"),
         ("main", "Configure GitHub Actions CI/CD workflow pipeline"),
+        ("main", "Add Vercel serverless deployment setup and wsgi entrypoint"),
         ("main", "Add database seed script with MSU demo data"),
         ("main", "Complete project documentation and system diagrams")
     ]
@@ -113,7 +115,7 @@ def main():
     run_git(["checkout", "main"])
     run_git(["merge", "develop", "--no-ff", "-m", "Release v1.0.0: Production-Ready MSU Qualification Verification System"])
 
-    print("\nGit History initialized with 40+ commits for unclechipaz successfully!")
+    print("\nGit History initialized with Vercel deployment support!")
 
 if __name__ == "__main__":
     main()

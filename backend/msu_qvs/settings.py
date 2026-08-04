@@ -1,4 +1,5 @@
 import os
+import shutil
 from pathlib import Path
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
@@ -8,7 +9,7 @@ SECRET_KEY = os.environ.get('DJANGO_SECRET_KEY', 'django-insecure-msu-qvs-super-
 
 DEBUG = os.environ.get('DEBUG', 'True').lower() == 'true'
 
-ALLOWED_HOSTS = ['*']
+ALLOWED_HOSTS = ['.vercel.app', 'localhost', '127.0.0.1', '*']
 
 # Application definition
 INSTALLED_APPS = [
@@ -68,10 +69,8 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'msu_qvs.wsgi.application'
 
-# Database
-# Default to SQLite for portable dev/demo, allow PostgreSQL via ENV
+# Database Configuration
 DB_ENGINE = os.environ.get('DB_ENGINE', 'django.db.backends.sqlite3')
-DB_NAME = os.environ.get('DB_NAME', str(BASE_DIR / 'db.sqlite3'))
 
 if DB_ENGINE == 'django.db.backends.postgresql':
     DATABASES = {
@@ -85,10 +84,29 @@ if DB_ENGINE == 'django.db.backends.postgresql':
         }
     }
 else:
+    # SQLite Database handling for Vercel Serverless / Local
+    default_db_path = BASE_DIR / 'db.sqlite3'
+    root_db_path = BASE_DIR.parent / 'db.sqlite3'
+    
+    # Select existing pre-seeded db
+    if default_db_path.exists():
+        selected_db = default_db_path
+    elif root_db_path.exists():
+        selected_db = root_db_path
+    else:
+        selected_db = default_db_path
+
+    # On Vercel, copy SQLite db to writable /tmp directory if needed
+    if os.environ.get('VERCEL') == '1':
+        tmp_db = Path('/tmp/db.sqlite3')
+        if not tmp_db.exists() and selected_db.exists():
+            shutil.copyfile(selected_db, tmp_db)
+        selected_db = tmp_db if tmp_db.exists() else selected_db
+
     DATABASES = {
         'default': {
             'ENGINE': 'django.db.backends.sqlite3',
-            'NAME': DB_NAME,
+            'NAME': os.environ.get('DB_NAME', str(selected_db)),
         }
     }
 
