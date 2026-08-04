@@ -20,6 +20,15 @@ def main():
     repo_dir = os.path.dirname(os.path.abspath(__file__))
     os.chdir(repo_dir)
 
+    # Clean up root api/ folder if created to prevent module collision with backend/api
+    root_api_index = os.path.join(repo_dir, "api", "index.py")
+    if os.path.exists(root_api_index):
+        try:
+            os.remove(root_api_index)
+            os.rmdir(os.path.join(repo_dir, "api"))
+        except Exception:
+            pass
+
     print("Initializing Git Repository...")
     run_git(["init"])
     run_git(["config", "user.name", "unclechipaz"])
@@ -31,7 +40,7 @@ def main():
         ("main", "Add requirements.txt and Python 3.13 dependencies"),
         ("main", "Configure settings.py and database fallback"),
         ("main", "Add vercel.json deployment configuration"),
-        ("main", "Add api/index.py Vercel serverless function entrypoint"),
+        ("main", "Add root index.py Vercel serverless function entrypoint"),
         ("main", "Add CONTRIBUTING.md with team member assignments"),
         ("main", "Add README.md with system architecture overview"),
 
@@ -116,7 +125,7 @@ def main():
     run_git(["checkout", "main"])
     run_git(["merge", "develop", "--no-ff", "-m", "Release v1.0.0: Production-Ready MSU Qualification Verification System"])
 
-    print("\nGit History initialized with Vercel serverless entrypoint!")
+    print("\nGit History initialized with root index.py for Vercel!")
 
 if __name__ == "__main__":
     main()
