@@ -1,0 +1,98 @@
+{% extends 'base.html' %}
+
+{% block title %}MSU Qualification Verification - Official Portal{% endblock %}
+
+{% block content %}
+<div class="py-5" style="background: linear-gradient(135deg, #EAEFF5 0%, #DCE4ED 100%); border-bottom: 2px solid var(--msu-gold);">
+    <div class="container py-4 text-center">
+        <span class="badge bg-navy text-warning px-3 py-2 rounded-pill fw-bold mb-3 shadow-sm">
+            <i class="fa-solid fa-shield-check me-1"></i> Official Verification System
+        </span>
+        
+        <!-- Dark Navy Hero Heading & Paragraph for High Contrast Legibility -->
+        <h1 class="display-4 fw-bold mb-3 text-navy" style="color: #002B49 !important;">Verify Academic Qualifications</h1>
+        <p class="lead max-width-700 mx-auto mb-4 fw-semibold text-dark" style="color: #1A2B3C !important;">
+            Instant, secure, and tamper-proof verification of degrees, diplomas, and academic transcripts issued by Midlands State University.
+        </p>
+
+        <!-- Search Box Form -->
+        <div class="row justify-content-center">
+            <div class="col-lg-8">
+                <div class="glass-panel p-4 shadow-lg text-start bg-white">
+                    <form action="{% url 'verify' %}" method="GET">
+                        <label for="query" class="form-label text-dark fw-bold mb-2">
+                            <i class="fa-solid fa-magnifying-glass text-warning me-1"></i> Enter Certificate Number, Student Number, or Verification Code:
+                        </label>
+                        <div class="input-group input-group-lg">
+                            <input type="text" id="query" name="query" class="form-control border-warning text-dark fw-semibold" placeholder="e.g. MSU-2024-BSC-CS-0001 or R201452X" required>
+                            <button class="btn btn-msu-gold px-4 text-navy fw-bold" type="submit">
+                                <i class="fa-solid fa-shield-halved me-1"></i> Verify Now
+                            </button>
+                        </div>
+                        <div class="d-flex justify-content-between mt-3 text-dark small fw-semibold">
+                            <span><i class="fa-solid fa-qrcode text-warning me-1"></i> Or scan certificate QR code</span>
+                            <a href="{% url 'qr_scanner' %}" class="text-decoration-none fw-bold text-navy">
+                                <i class="fa-solid fa-camera me-1"></i> Open Live QR Scanner &rarr;
+                            </a>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="container py-5">
+    <div class="row g-4 mb-5 text-center">
+        <div class="col-md-4">
+            <div class="card card-stat h-100 p-4">
+                <div class="display-5 text-primary mb-2"><i class="fa-solid fa-certificate"></i></div>
+                <h3 class="fw-bold text-navy">{{ total_verified|default:"1,250+" }}</h3>
+                <p class="text-muted mb-0">Active Digital Certificates Issued</p>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="card card-stat h-100 p-4">
+                <div class="display-5 text-success mb-2"><i class="fa-solid fa-building-columns"></i></div>
+                <h3 class="fw-bold text-navy">100% Secure</h3>
+                <p class="text-muted mb-0">Cryptographic Verification Hashes</p>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="card card-stat h-100 p-4">
+                <div class="display-5 text-warning mb-2"><i class="fa-solid fa-brain"></i></div>
+                <h3 class="fw-bold text-navy">AI Fraud Protection</h3>
+                <p class="text-muted mb-0">Automated Tamper & Anomaly Detection</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Quick User Guidance -->
+    <div class="row align-items-center g-4 my-4">
+        <div class="col-md-6">
+            <h2 class="fw-bold text-navy mb-3"><i class="fa-solid fa-user-shield text-warning me-2"></i> For Employers & Institutions</h2>
+            <p class="text-dark">
+                Quickly validate candidate credentials before hiring. Our system generates official PDF verification statements stamped by the Midlands State University Academic Registry.
+            </p>
+            <ul class="list-unstyled text-dark fw-semibold">
+                <li class="mb-2"><i class="fa-solid fa-check-circle text-success me-2"></i> Instant validation by Certificate or Student ID</li>
+                <li class="mb-2"><i class="fa-solid fa-check-circle text-success me-2"></i> Downloadable Official PDF Verification Reports</li>
+                <li class="mb-2"><i class="fa-solid fa-check-circle text-success me-2"></i> History log for background screening compliance</li>
+            </ul>
+            <a href="{% url 'register' %}" class="btn btn-msu-navy mt-2">
+                <i class="fa-solid fa-building me-1"></i> Register as Employer
+            </a>
+        </div>
+        <div class="col-md-6 text-center">
+            <div class="p-4 bg-white rounded-4 shadow-sm border border-warning">
+                <i class="fa-solid fa-qrcode fa-5x text-navy mb-3"></i>
+                <h4 class="fw-bold text-navy">Scan QR Code</h4>
+                <p class="text-muted small">Every genuine MSU degree certificate contains a QR code. Use your camera or our web scanner to verify instantly.</p>
+                <a href="{% url 'qr_scanner' %}" class="btn btn-msu-gold text-navy fw-bold">
+                    <i class="fa-solid fa-camera me-1"></i> Launch QR Scanner
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

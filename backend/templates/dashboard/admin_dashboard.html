@@ -1,0 +1,127 @@
+{% extends 'base.html' %}
+
+{% block title %}Administrator Dashboard - MSU QVS{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+    <!-- Header -->
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <div>
+            <h2 class="fw-bold text-navy mb-1"><i class="fa-solid fa-gauge text-warning me-2"></i> System Executive Dashboard</h2>
+            <p class="text-muted mb-0">Midlands State University Qualification Verification Overview</p>
+        </div>
+        <div class="d-flex gap-2">
+            <a href="{% url 'student_create' %}" class="btn btn-msu-gold"><i class="fa-solid fa-user-plus me-1"></i> Register Student</a>
+            <a href="{% url 'reports' %}" class="btn btn-msu-navy"><i class="fa-solid fa-chart-pie me-1"></i> Reports</a>
+        </div>
+    </div>
+
+    <!-- Stats Grid Cards -->
+    <div class="row g-3 mb-4">
+        <div class="col-md-3">
+            <div class="card card-stat bg-white p-3 border-start border-4 border-primary">
+                <small class="text-muted d-block font-uppercase fw-bold">Graduates Registered</small>
+                <h3 class="fw-bold text-navy mb-0">{{ total_graduates }}</h3>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card card-stat bg-white p-3 border-start border-4 border-success">
+                <small class="text-muted d-block font-uppercase fw-bold">Active Certificates</small>
+                <h3 class="fw-bold text-success mb-0">{{ active_certificates }}</h3>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card card-stat bg-white p-3 border-start border-4 border-danger">
+                <small class="text-muted d-block font-uppercase fw-bold">Revoked Certificates</small>
+                <h3 class="fw-bold text-danger mb-0">{{ revoked_certificates }}</h3>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card card-stat bg-white p-3 border-start border-4 border-warning">
+                <small class="text-muted d-block font-uppercase fw-bold">Total Verifications</small>
+                <h3 class="fw-bold text-dark mb-0">{{ total_verifications }}</h3>
+            </div>
+        </div>
+    </div>
+
+    <!-- AI Fraud Warning Banner if suspicious counts exist -->
+    {% if suspicious_verifications > 0 %}
+        <div class="alert alert-danger shadow-sm rounded-3 d-flex justify-content-between align-items-center mb-4">
+            <div>
+                <strong><i class="fa-solid fa-triangle-exclamation me-2"></i> AI Fraud Alert:</strong>
+                {{ suspicious_verifications }} verification attempts flagged with anomaly risk scores.
+            </div>
+            <a href="{% url 'fraud_analytics' %}" class="btn btn-sm btn-danger fw-bold">Inspect AI Analytics &rarr;</a>
+        </div>
+    {% endif %}
+
+    <!-- Tables Row -->
+    <div class="row g-4">
+        <!-- Recent Verifications -->
+        <div class="col-lg-7">
+            <div class="card card-stat">
+                <div class="card-header bg-white py-3 d-flex justify-content-between align-items-center">
+                    <h5 class="fw-bold text-navy mb-0"><i class="fa-solid fa-history text-warning me-2"></i> Recent Verification Logs</h5>
+                    <a href="{% url 'export_csv' %}" class="btn btn-sm btn-outline-success"><i class="fa-solid fa-file-csv me-1"></i> Export CSV</a>
+                </div>
+                <div class="table-responsive">
+                    <table class="table table-hover align-middle mb-0">
+                        <thead class="table-light">
+                            <tr>
+                                <th>Query</th>
+                                <th>Status</th>
+                                <th>IP Address</th>
+                                <th>Timestamp</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for log in recent_verifications %}
+                                <tr>
+                                    <td><code>{{ log.search_query }}</code></td>
+                                    <td>
+                                        {% if log.result_status == 'VERIFIED' %}
+                                            <span class="badge bg-success">VERIFIED</span>
+                                        {% elif log.result_status == 'REVOKED' %}
+                                            <span class="badge bg-danger">REVOKED</span>
+                                        {% else %}
+                                            <span class="badge bg-secondary">INVALID</span>
+                                        {% endif %}
+                                    </td>
+                                    <td><small>{{ log.ip_address|default:"127.0.0.1" }}</small></td>
+                                    <td><small class="text-muted">{{ log.timestamp|date:"M d, H:i" }}</small></td>
+                                </tr>
+                            {% empty %}
+                                <tr><td colspan="4" class="text-center text-muted py-3">No verification logs recorded yet.</td></tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <!-- Recent System Audit Activity -->
+        <div class="col-lg-5">
+            <div class="card card-stat">
+                <div class="card-header bg-white py-3">
+                    <h5 class="fw-bold text-navy mb-0"><i class="fa-solid fa-shield text-primary me-2"></i> System Audit Trail</h5>
+                </div>
+                <div class="card-body p-0">
+                    <ul class="list-group list-group-flush">
+                        {% for act in recent_activities %}
+                            <li class="list-group-item d-flex justify-content-between align-items-center py-2">
+                                <div>
+                                    <strong class="small text-navy">{{ act.user.username|default:"System" }}</strong>
+                                    <small class="d-block text-muted">{{ act.action }}</small>
+                                </div>
+                                <small class="text-muted">{{ act.timestamp|date:"H:i" }}</small>
+                            </li>
+                        {% empty %}
+                            <li class="list-group-item text-center text-muted py-3">No audit actions logged yet.</li>
+                        {% endfor %}
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

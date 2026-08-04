@@ -1,0 +1,46 @@
+/* Custom Stylesheet for Midlands State University Qualification Verification System */
+
+:root {
+    --msu-navy: #002B49;
+    --msu-gold: #D4AF37;
+    --msu-gold-hover: #b89528;
+    --msu-bg: #F4F6F9;
+    --msu-card-bg: #FFFFFF;
+    --msu-text-dark: #002B49;
+}
+
+body {
+    background-color: var(--msu-bg);
+    color: var(--msu-text-dark);
+}
+
+.text-navy {
+    color: var(--msu-navy) !important;
+}
+
+.bg-navy {
+    background-color: var(--msu-navy) !important;
+    color: #FFFFFF !important;
+}
+
+.text-gold {
+    color: var(--msu-gold) !important;
+}
+
+.max-width-600 {
+    max-width: 600px;
+}
+
+.max-width-700 {
+    max-width: 700px;
+}
+
+/* Form input contrast */
+input.form-control, select.form-select {
+    color: #002B49 !important;
+    font-weight: 600;
+}
+
+input::placeholder {
+    color: #6c757d !important;
+}

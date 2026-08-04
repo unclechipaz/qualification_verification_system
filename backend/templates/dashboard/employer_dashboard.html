@@ -1,0 +1,76 @@
+{% extends 'base.html' %}
+
+{% block title %}Employer Portal - MSU QVS{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <div>
+            <span class="badge bg-success mb-2"><i class="fa-solid fa-building me-1"></i> Verified Corporate Account</span>
+            <h2 class="fw-bold text-navy mb-0">{{ user.organization_name|default:user.username }}</h2>
+            <p class="text-muted mb-0">Employer Qualification Screening Portal</p>
+        </div>
+        <a href="{% url 'verify' %}" class="btn btn-msu-gold"><i class="fa-solid fa-shield-halved me-1"></i> Verify Candidate</a>
+    </div>
+
+    <div class="row g-3 mb-4">
+        <div class="col-md-6">
+            <div class="card card-stat p-3 border-start border-4 border-primary">
+                <small class="text-muted font-uppercase fw-bold">Total Verifications Performed</small>
+                <h3 class="fw-bold text-navy mb-0">{{ total_performed }}</h3>
+            </div>
+        </div>
+        <div class="col-md-6">
+            <div class="card card-stat p-3 border-start border-4 border-success">
+                <small class="text-muted font-uppercase fw-bold">Verified Valid Credentials</small>
+                <h3 class="fw-bold text-success mb-0">{{ verified_count }}</h3>
+            </div>
+        </div>
+    </div>
+
+    <div class="card card-stat">
+        <div class="card-header bg-white py-3 d-flex justify-content-between align-items-center">
+            <h5 class="fw-bold text-navy mb-0"><i class="fa-solid fa-clock-rotate-left text-warning me-2"></i> Verification History Log</h5>
+            <a href="{% url 'export_csv' %}" class="btn btn-sm btn-outline-success"><i class="fa-solid fa-download me-1"></i> Download Screening History CSV</a>
+        </div>
+        <div class="table-responsive">
+            <table class="table table-hover align-middle mb-0">
+                <thead class="table-light">
+                    <tr>
+                        <th>Query Searched</th>
+                        <th>Search Method</th>
+                        <th>Result Status</th>
+                        <th>Timestamp</th>
+                        <th>Action</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for item in history %}
+                        <tr>
+                            <td><code>{{ item.search_query }}</code></td>
+                            <td><span class="badge bg-light text-dark border">{{ item.get_search_type_display }}</span></td>
+                            <td>
+                                {% if item.result_status == 'VERIFIED' %}
+                                    <span class="badge bg-success">VERIFIED</span>
+                                {% elif item.result_status == 'REVOKED' %}
+                                    <span class="badge bg-danger">REVOKED</span>
+                                {% else %}
+                                    <span class="badge bg-secondary">INVALID</span>
+                                {% endif %}
+                            </td>
+                            <td><small class="text-muted">{{ item.timestamp|date:"Y-m-d H:i" }}</small></td>
+                            <td>
+                                <a href="{% url 'download_verification_pdf' item.id %}" class="btn btn-sm btn-outline-primary">
+                                    <i class="fa-solid fa-file-pdf"></i> Report PDF
+                                </a>
+                            </td>
+                        </tr>
+                    {% empty %}
+                        <tr><td colspan="5" class="text-center text-muted py-4">No candidate verifications conducted yet. Click 'Verify Candidate' above to screen a graduate.</td></tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+{% endblock %}

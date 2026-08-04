@@ -1,0 +1,71 @@
+{% extends 'base.html' %}
+
+{% block title %}Student Registry - MSU QVS{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <div>
+            <h2 class="fw-bold text-navy mb-0"><i class="fa-solid fa-user-graduate text-warning me-2"></i> Student & Graduate Registry</h2>
+            <p class="text-muted mb-0">Academic records and graduation register.</p>
+        </div>
+        <a href="{% url 'student_create' %}" class="btn btn-msu-gold"><i class="fa-solid fa-plus me-1"></i> Register New Student</a>
+    </div>
+
+    <!-- Search filter -->
+    <div class="card card-stat mb-4">
+        <div class="card-body">
+            <form action="{% url 'student_list' %}" method="GET" class="row g-2">
+                <div class="col-md-10">
+                    <input type="text" name="q" class="form-control" placeholder="Search by Student Number, National ID, Name, or Programme..." value="{{ query }}">
+                </div>
+                <div class="col-md-2">
+                    <button type="submit" class="btn btn-msu-navy w-100"><i class="fa-solid fa-filter me-1"></i> Filter</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <div class="card card-stat">
+        <div class="table-responsive">
+            <table class="table table-hover align-middle mb-0">
+                <thead class="table-light">
+                    <tr>
+                        <th>Student Number</th>
+                        <th>Full Name</th>
+                        <th>National ID</th>
+                        <th>Programme / Faculty</th>
+                        <th>Classification</th>
+                        <th>Graduation Date</th>
+                        <th>Status</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for student in students %}
+                        <tr>
+                            <td><strong>{{ student.student_number }}</strong></td>
+                            <td>{{ student.full_name }}</td>
+                            <td><small class="text-muted">{{ student.national_id }}</small></td>
+                            <td>
+                                <div>{{ student.programme }}</div>
+                                <small class="text-muted">{{ student.faculty }}</small>
+                            </td>
+                            <td><span class="badge bg-navy text-warning">{{ student.degree_classification }}</span></td>
+                            <td>{{ student.graduation_date }}</td>
+                            <td>
+                                {% if student.status == 'GRADUATED' or student.status == 'Active' %}
+                                    <span class="badge bg-success">Graduated</span>
+                                {% else %}
+                                    <span class="badge bg-danger">{{ student.status }}</span>
+                                {% endif %}
+                            </td>
+                        </tr>
+                    {% empty %}
+                        <tr><td colspan="7" class="text-center text-muted py-4">No student records found.</td></tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+{% endblock %}

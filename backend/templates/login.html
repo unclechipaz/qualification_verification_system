@@ -1,0 +1,58 @@
+{% extends 'base.html' %}
+
+{% block title %}System Login - MSU Qualification Verification{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+    <div class="row justify-content-center">
+        <div class="col-md-6 col-lg-5">
+            <div class="card card-stat p-4">
+                <div class="text-center mb-4">
+                    <div class="display-5 text-navy mb-2"><i class="fa-solid fa-lock text-warning"></i></div>
+                    <h3 class="fw-bold text-navy">System Login</h3>
+                    <p class="text-muted small">Sign in to access your MSU QVS role dashboard.</p>
+                </div>
+
+                <form method="POST" action="{% url 'login' %}">
+                    {% csrf_token %}
+                    <div class="mb-3">
+                        <label for="username" class="form-label fw-semibold">Username or Email</label>
+                        <input type="text" class="form-control" id="username" name="username" placeholder="Enter username or email" required>
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="password" class="form-label fw-semibold">Password</label>
+                        <input type="password" class="form-control" id="password" name="password" placeholder="Enter password" required>
+                    </div>
+
+                    <button type="submit" class="btn btn-msu-gold w-100 py-2 fw-bold mt-2">
+                        <i class="fa-solid fa-right-to-bracket me-1"></i> Log In
+                    </button>
+                </form>
+
+                <!-- Quick Pre-Seeded Demo Fill Buttons -->
+                <div class="mt-4 pt-3 border-top text-center">
+                    <small class="text-muted fw-bold d-block mb-2"><i class="fa-solid fa-bolt text-warning me-1"></i> University Demo Quick Fill Accounts:</small>
+                    <div class="d-flex flex-wrap gap-2 justify-content-center">
+                        <button type="button" onclick="quickFill('admin', 'AdminPass123!')" class="btn btn-sm btn-outline-dark">Admin</button>
+                        <button type="button" onclick="quickFill('registrar', 'RegistrarPass123!')" class="btn btn-sm btn-outline-primary">Registrar</button>
+                        <button type="button" onclick="quickFill('employer1', 'EmployerPass123!')" class="btn btn-sm btn-outline-success">Employer</button>
+                        <button type="button" onclick="quickFill('graduate1', 'GraduatePass123!')" class="btn btn-sm btn-outline-secondary">Graduate</button>
+                    </div>
+                </div>
+
+                <div class="mt-4 text-center">
+                    <p class="text-muted small">Don't have an employer account? <a href="{% url 'register' %}" class="fw-bold text-navy">Register Here</a></p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    function quickFill(user, pass) {
+        document.getElementById('username').value = user;
+        document.getElementById('password').value = pass;
+    }
+</script>
+{% endblock %}

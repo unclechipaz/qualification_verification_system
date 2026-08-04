@@ -1,0 +1,63 @@
+{% extends 'base.html' %}
+
+{% block title %}User Registration - MSU Qualification Verification{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+    <div class="row justify-content-center">
+        <div class="col-md-8 col-lg-7">
+            <div class="card card-stat p-4">
+                <div class="text-center mb-4">
+                    <h3 class="fw-bold text-navy"><i class="fa-solid fa-user-plus text-warning me-2"></i> Register Account</h3>
+                    <p class="text-muted small">Register as an Employer or Verifier to access verification history and PDF downloads.</p>
+                </div>
+
+                <form method="POST" action="{% url 'register' %}">
+                    {% csrf_token %}
+                    <div class="row g-3">
+                        <div class="col-md-6">
+                            <label for="username" class="form-label fw-semibold">Username *</label>
+                            <input type="text" class="form-control" id="username" name="username" required>
+                        </div>
+                        <div class="col-md-6">
+                            <label for="email" class="form-label fw-semibold">Corporate Email *</label>
+                            <input type="email" class="form-control" id="email" name="email" required>
+                        </div>
+                        <div class="col-md-6">
+                            <label for="first_name" class="form-label fw-semibold">First Name</label>
+                            <input type="text" class="form-control" id="first_name" name="first_name">
+                        </div>
+                        <div class="col-md-6">
+                            <label for="last_name" class="form-label fw-semibold">Last Name</label>
+                            <input type="text" class="form-control" id="last_name" name="last_name">
+                        </div>
+                        <div class="col-md-6">
+                            <label for="role" class="form-label fw-semibold">Account Role *</label>
+                            <select class="form-select" id="role" name="role" required>
+                                <option value="EMPLOYER">Employer / Recruiter</option>
+                                <option value="PUBLIC_VERIFIER">Public / Academic Verifier</option>
+                            </select>
+                        </div>
+                        <div class="col-md-6">
+                            <label for="organization_name" class="form-label fw-semibold">Organization / Company Name</label>
+                            <input type="text" class="form-control" id="organization_name" name="organization_name" placeholder="e.g. Econet Wireless">
+                        </div>
+                        <div class="col-md-6">
+                            <label for="password" class="form-label fw-semibold">Password *</label>
+                            <input type="password" class="form-control" id="password" name="password" required>
+                        </div>
+                        <div class="col-md-6">
+                            <label for="confirm_password" class="form-label fw-semibold">Confirm Password *</label>
+                            <input type="password" class="form-control" id="confirm_password" name="confirm_password" required>
+                        </div>
+                    </div>
+
+                    <button type="submit" class="btn btn-msu-gold w-100 py-2 fw-bold mt-4">
+                        <i class="fa-solid fa-user-check me-1"></i> Complete Registration
+                    </button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

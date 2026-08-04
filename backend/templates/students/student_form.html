@@ -1,0 +1,83 @@
+{% extends 'base.html' %}
+
+{% block title %}Register Student - MSU QVS{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+    <div class="row justify-content-center">
+        <div class="col-lg-8">
+            <div class="card card-stat p-4">
+                <h3 class="fw-bold text-navy mb-4"><i class="fa-solid fa-user-plus text-warning me-2"></i> Register Student & Issue Credential</h3>
+
+                <form method="POST" action="{% url 'student_create' %}">
+                    {% csrf_token %}
+                    <div class="row g-3">
+                        <div class="col-md-6">
+                            <label for="student_number" class="form-label fw-semibold">Student Number *</label>
+                            <input type="text" class="form-control" id="student_number" name="student_number" placeholder="e.g. R201452X" required>
+                        </div>
+                        <div class="col-md-6">
+                            <label for="national_id" class="form-label fw-semibold">National ID *</label>
+                            <input type="text" class="form-control" id="national_id" name="national_id" placeholder="e.g. 63-1234567-B-07" required>
+                        </div>
+                        <div class="col-md-12">
+                            <label for="full_name" class="form-label fw-semibold">Full Name *</label>
+                            <input type="text" class="form-control" id="full_name" name="full_name" placeholder="e.g. Charlton Ndlovu" required>
+                        </div>
+                        <div class="col-md-6">
+                            <label for="programme" class="form-label fw-semibold">Programme *</label>
+                            <input type="text" class="form-control" id="programme" name="programme" placeholder="e.g. BSc Computer Science" required>
+                        </div>
+                        <div class="col-md-6">
+                            <label for="faculty" class="form-label fw-semibold">Faculty *</label>
+                            <input type="text" class="form-control" id="faculty" name="faculty" placeholder="e.g. Science and Technology" required>
+                        </div>
+                        <div class="col-md-4">
+                            <label for="level" class="form-label fw-semibold">Study Level</label>
+                            <select class="form-select" id="level" name="level">
+                                <option value="Undergraduate">Undergraduate</option>
+                                <option value="Postgraduate">Postgraduate</option>
+                                <option value="Doctorate">Doctorate</option>
+                                <option value="Diploma">Diploma</option>
+                            </select>
+                        </div>
+                        <div class="col-md-4">
+                            <label for="graduation_date" class="form-label fw-semibold">Graduation Date *</label>
+                            <input type="date" class="form-control" id="graduation_date" name="graduation_date" required>
+                        </div>
+                        <div class="col-md-4">
+                            <label for="degree_classification" class="form-label fw-semibold">Classification *</label>
+                            <select class="form-select" id="degree_classification" name="degree_classification" required>
+                                <option value="First Class (1.1)">First Class (1.1)</option>
+                                <option value="Upper Second (2.1)">Upper Second (2.1)</option>
+                                <option value="Lower Second (2.2)">Lower Second (2.2)</option>
+                                <option value="Pass">Pass</option>
+                                <option value="Distinction">Distinction</option>
+                                <option value="Merit">Merit</option>
+                            </select>
+                        </div>
+                        <div class="col-md-12">
+                            <label for="qualification" class="form-label fw-semibold">Qualification Title *</label>
+                            <input type="text" class="form-control" id="qualification" name="qualification" placeholder="e.g. Bachelor of Science Honors Degree in Computer Science" required>
+                        </div>
+                        <div class="col-md-6">
+                            <label for="status" class="form-label fw-semibold">Academic Status</label>
+                            <select class="form-select" id="status" name="status">
+                                <option value="Graduated">Graduated</option>
+                                <option value="Active">Active</option>
+                                <option value="Revoked">Revoked</option>
+                                <option value="Suspended">Suspended</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="d-flex justify-content-end gap-2 mt-4">
+                        <a href="{% url 'student_list' %}" class="btn btn-outline-secondary">Cancel</a>
+                        <button type="submit" class="btn btn-msu-gold"><i class="fa-solid fa-save me-1"></i> Save Student Record</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

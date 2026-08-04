@@ -1,0 +1,38 @@
+version: '3.8'
+
+services:
+  db:
+    image: postgres:16-alpine
+    container_name: msu_qvs_postgres
+    volumes:
+      - postgres_data:/var/lib/postgresql/data/
+    environment:
+      - POSTGRES_DB=msu_qvs_db
+      - POSTGRES_USER=msu_user
+      - POSTGRES_PASSWORD=msu_password
+    ports:
+      - "5432:5432"
+
+  web:
+    build:
+      context: ..
+      dockerfile: docker/Dockerfile
+    container_name: msu_qvs_web
+    command: python backend/manage.py runserver 0.0.0.0:8000
+    volumes:
+      - ..:/app
+    ports:
+      - "8000:8000"
+    environment:
+      - DB_ENGINE=django.db.backends.postgresql
+      - DB_NAME=msu_qvs_db
+      - DB_USER=msu_user
+      - DB_PASSWORD=msu_password
+      - DB_HOST=db
+      - DB_PORT=5432
+      - DEBUG=True
+    depends_on:
+      - db
+
+volumes:
+  postgres_data:

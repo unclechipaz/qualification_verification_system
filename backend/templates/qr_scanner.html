@@ -1,0 +1,61 @@
+{% extends 'base.html' %}
+
+{% block title %}QR Code Scanner - MSU Qualification Verification{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+    <div class="row justify-content-center">
+        <div class="col-lg-8">
+            <div class="card card-stat text-center p-4">
+                <h2 class="fw-bold text-navy mb-2"><i class="fa-solid fa-qrcode text-warning me-2"></i> Certificate QR Code Scanner</h2>
+                <p class="text-muted mb-4">Point your camera at the QR code printed on the official MSU certificate, or upload a photo of the QR code.</p>
+
+                <!-- Video Stream Container -->
+                <div class="bg-dark rounded-3 position-relative overflow-hidden mb-4 d-flex align-items-center justify-content-center" style="height: 320px;">
+                    <video id="qr-video" class="w-100 h-100" style="object-fit: cover;" autoplay playsinline></video>
+                    <div class="position-absolute border border-3 border-warning rounded-3" style="width: 200px; height: 200px; pointer-events: none; box-shadow: 0 0 0 9999px rgba(0, 0, 0, 0.5);"></div>
+                </div>
+
+                <div class="d-flex justify-content-center gap-3 mb-3">
+                    <button id="btn-start-camera" class="btn btn-msu-navy px-4"><i class="fa-solid fa-camera me-1"></i> Start Camera</button>
+                    <button id="btn-stop-camera" class="btn btn-outline-secondary px-4"><i class="fa-solid fa-stop me-1"></i> Stop</button>
+                </div>
+
+                <hr class="my-4">
+
+                <!-- Manual Input Fallback -->
+                <form action="{% url 'verify' %}" method="GET" class="text-start">
+                    <label for="code" class="form-label fw-bold">Manual Code Entry:</label>
+                    <div class="input-group">
+                        <input type="text" id="code" name="code" class="form-control" placeholder="Scan or enter verification code / URL...">
+                        <button type="submit" class="btn btn-msu-gold"><i class="fa-solid fa-arrow-right"></i> Verify Code</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    let video = document.getElementById('qr-video');
+    let stream = null;
+
+    document.getElementById('btn-start-camera').addEventListener('click', async () => {
+        try {
+            stream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: "environment" } });
+            video.srcObject = stream;
+        } catch (err) {
+            alert("Camera access denied or unavailable. Please use manual code entry.");
+        }
+    });
+
+    document.getElementById('btn-stop-camera').addEventListener('click', () => {
+        if (stream) {
+            stream.getTracks().forEach(track => track.stop());
+            video.srcObject = null;
+        }
+    });
+</script>
+{% endblock %}

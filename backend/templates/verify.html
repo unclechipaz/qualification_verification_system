@@ -1,0 +1,149 @@
+{% extends 'base.html' %}
+
+{% block title %}Verification Result - MSU Qualification Verification{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+    <div class="row justify-content-center">
+        <div class="col-lg-10">
+
+            <!-- Search Bar Header -->
+            <div class="card card-stat mb-4">
+                <div class="card-body p-4">
+                    <form action="{% url 'verify' %}" method="GET" class="row g-3 align-items-center">
+                        <div class="col-md-9">
+                            <div class="input-group">
+                                <span class="input-group-text bg-white"><i class="fa-solid fa-magnifying-glass text-warning"></i></span>
+                                <input type="text" name="query" class="form-control" placeholder="Search by Certificate Number, Student Number, or Code..." value="{{ query }}">
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <button type="submit" class="btn btn-msu-gold w-100"><i class="fa-solid fa-search me-1"></i> Verify</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+
+            {% if error %}
+                <div class="alert alert-warning shadow-sm rounded-4 p-4 text-center">
+                    <i class="fa-solid fa-triangle-exclamation fa-3x text-warning mb-3"></i>
+                    <h4 class="fw-bold">{{ error }}</h4>
+                </div>
+            {% elif result_status == 'VERIFIED' %}
+                <!-- VERIFIED RESULT STAMP & DETAILS -->
+                <div class="card card-stat border-top border-5 border-success mb-4">
+                    <div class="card-body p-5">
+                        <div class="d-flex flex-column flex-md-row justify-content-between align-items-center mb-4">
+                            <div>
+                                <span class="badge bg-success px-4 py-2 rounded-pill fs-6 fw-bold mb-2">
+                                    <i class="fa-solid fa-shield-check me-2"></i> QUALIFICATION VERIFIED & VALID
+                                </span>
+                                <h2 class="fw-bold text-navy mb-0">{{ certificate.student.full_name }}</h2>
+                                <p class="text-muted mb-0">Student Number: <strong>{{ certificate.student.student_number }}</strong> | National ID: {{ certificate.student.national_id }}</p>
+                            </div>
+                            <div class="mt-3 mt-md-0 text-center">
+                                {% if certificate.qr_code_image %}
+                                    <img src="{{ certificate.qr_code_image.url }}" alt="QR Code" class="img-fluid rounded border p-1" style="max-height: 120px;">
+                                {% endif %}
+                            </div>
+                        </div>
+
+                        <hr class="my-4">
+
+                        <h5 class="fw-bold text-navy mb-3"><i class="fa-solid fa-graduation-cap text-warning me-2"></i> Academic Award Specification</h5>
+                        
+                        <div class="row g-3 bg-light p-4 rounded-3 border">
+                            <div class="col-md-6">
+                                <small class="text-muted d-block">Qualification Awarded</small>
+                                <strong class="fs-6 text-dark">{{ certificate.student.qualification }}</strong>
+                            </div>
+                            <div class="col-md-6">
+                                <small class="text-muted d-block">Degree Classification</small>
+                                <span class="badge bg-navy text-warning fs-6 px-3 py-1">{{ certificate.student.degree_classification }}</span>
+                            </div>
+                            <div class="col-md-6">
+                                <small class="text-muted d-block">Faculty</small>
+                                <strong>{{ certificate.student.faculty }}</strong>
+                            </div>
+                            <div class="col-md-6">
+                                <small class="text-muted d-block">Programme</small>
+                                <strong>{{ certificate.student.programme }}</strong>
+                            </div>
+                            <div class="col-md-6">
+                                <small class="text-muted d-block">Certificate Number</small>
+                                <code class="fs-6 text-navy">{{ certificate.certificate_number }}</code>
+                            </div>
+                            <div class="col-md-6">
+                                <small class="text-muted d-block">Graduation Date</small>
+                                <strong>{{ certificate.student.graduation_date }}</strong>
+                            </div>
+                        </div>
+
+                        <!-- Cryptographic Hash & AI Fraud Score -->
+                        <div class="mt-4 p-3 bg-white border rounded-3 d-flex justify-content-between align-items-center">
+                            <div>
+                                <small class="text-muted d-block">Digital Signature Integrity Hash (SHA-256)</small>
+                                <code class="small text-break">{{ certificate.digital_signature_hash }}</code>
+                            </div>
+                            <div class="text-end ms-3">
+                                <small class="text-muted d-block">AI Fraud Risk Score</small>
+                                <span class="badge bg-success px-3 py-1">{{ anomaly_score }}/100 (Safe)</span>
+                            </div>
+                        </div>
+
+                        <!-- PDF Download Buttons -->
+                        <div class="d-flex justify-content-end gap-3 mt-4">
+                            {% if verification_log %}
+                                <a href="{% url 'download_verification_pdf' verification_log.id %}" class="btn btn-msu-gold">
+                                    <i class="fa-solid fa-file-pdf me-1"></i> Download Verification PDF Report
+                                </a>
+                            {% endif %}
+                            <a href="{% url 'certificate_detail' certificate.certificate_number %}" class="btn btn-msu-navy">
+                                <i class="fa-solid fa-award me-1"></i> View Printable Certificate
+                            </a>
+                        </div>
+                    </div>
+                </div>
+
+            {% elif result_status == 'REVOKED' %}
+                <!-- REVOKED RESULT ALERT -->
+                <div class="card card-stat border-top border-5 border-danger mb-4">
+                    <div class="card-body p-5 text-center">
+                        <i class="fa-solid fa-ban fa-4x text-danger mb-3"></i>
+                        <h2 class="fw-bold text-danger">QUALIFICATION REVOKED</h2>
+                        <p class="lead text-muted mb-3">
+                            The certificate number <strong>{{ query }}</strong> was formally revoked by Midlands State University Academic Registry.
+                        </p>
+                        <div class="alert alert-danger max-width-600 mx-auto text-start">
+                            <strong><i class="fa-solid fa-circle-exclamation me-1"></i> Revocation Reason:</strong><br>
+                            {{ certificate.revocation_reason|default:"Revoked due to disciplinary or academic integrity sanctions." }}
+                        </div>
+                        <span class="badge bg-danger px-3 py-2">AI Risk Flag: High Anomaly Score ({{ anomaly_score }}/100)</span>
+                    </div>
+                </div>
+
+            {% else %}
+                <!-- INVALID / NOT FOUND RESULT -->
+                <div class="card card-stat border-top border-5 border-secondary mb-4">
+                    <div class="card-body p-5 text-center">
+                        <i class="fa-solid fa-circle-xmark fa-4x text-muted mb-3"></i>
+                        <h2 class="fw-bold text-navy">INVALID / NOT FOUND</h2>
+                        <p class="lead text-muted mb-4">
+                            No matching qualification record found for query: <code>{{ query }}</code>.
+                        </p>
+                        <div class="alert alert-warning max-width-600 mx-auto text-start mb-4">
+                            <strong><i class="fa-solid fa-triangle-exclamation me-1"></i> Verification Advisory:</strong>
+                            <ul class="mb-0 ps-3 mt-1">
+                                <li>Check if the Certificate Number or Student ID was typed correctly.</li>
+                                <li>Ensure you are scanning an official Midlands State University certificate.</li>
+                                <li>If you suspect fraud, contact <code>verifications@msu.ac.zw</code>.</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            {% endif %}
+
+        </div>
+    </div>
+</div>
+{% endblock %}

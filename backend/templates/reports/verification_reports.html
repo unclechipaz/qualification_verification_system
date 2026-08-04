@@ -1,0 +1,61 @@
+{% extends 'base.html' %}
+
+{% block title %}Verification Analytics & Reports - MSU QVS{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <div>
+            <h2 class="fw-bold text-navy mb-0"><i class="fa-solid fa-chart-pie text-warning me-2"></i> Verification System Analytics Reports</h2>
+            <p class="text-muted mb-0">Daily, Weekly, and Monthly verification statistics.</p>
+        </div>
+        <a href="{% url 'export_csv' %}" class="btn btn-msu-gold"><i class="fa-solid fa-file-csv me-1"></i> Export Verification Logs CSV</a>
+    </div>
+
+    <!-- Summary Metrics -->
+    <div class="row g-4 mb-4">
+        <div class="col-md-4">
+            <div class="card card-stat bg-white p-4 text-center border-top border-4 border-primary">
+                <small class="text-muted fw-bold">Daily Verifications (Today)</small>
+                <h2 class="display-5 fw-bold text-navy my-2">{{ daily_count }}</h2>
+                <span class="badge bg-light text-dark border">Last 24 Hours</span>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="card card-stat bg-white p-4 text-center border-top border-4 border-success">
+                <small class="text-muted fw-bold">Weekly Verifications</small>
+                <h2 class="display-5 fw-bold text-success my-2">{{ weekly_count }}</h2>
+                <span class="badge bg-light text-dark border">Last 7 Days</span>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="card card-stat bg-white p-4 text-center border-top border-4 border-warning">
+                <small class="text-muted fw-bold">Monthly Verifications</small>
+                <h2 class="display-5 fw-bold text-dark my-2">{{ monthly_count }}</h2>
+                <span class="badge bg-light text-dark border">Last 30 Days</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- Breakdown Table -->
+    <div class="card card-stat">
+        <div class="card-header bg-white py-3">
+            <h5 class="fw-bold text-navy mb-0"><i class="fa-solid fa-list-check me-2 text-warning"></i> Verification Results Breakdown</h5>
+        </div>
+        <div class="card-body">
+            <div class="row g-3">
+                {% for item in status_breakdown %}
+                    <div class="col-md-4">
+                        <div class="p-3 bg-light border rounded text-center">
+                            <h6 class="fw-bold mb-1">{{ item.result_status }}</h6>
+                            <h3 class="fw-bold mb-0 text-navy">{{ item.count }}</h3>
+                        </div>
+                    </div>
+                {% empty %}
+                    <div class="col-12 text-center text-muted py-3">No verification status metrics calculated yet.</div>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

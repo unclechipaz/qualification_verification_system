@@ -1,0 +1,92 @@
+{% extends 'base.html' %}
+
+{% block title %}Qualifications & Digital Certificates - MSU QVS{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <div>
+            <h2 class="fw-bold text-navy mb-0"><i class="fa-solid fa-certificate text-warning me-2"></i> Qualification Programs & Issued Certificates</h2>
+            <p class="text-muted mb-0">Official academic programs and digital certificate registry.</p>
+        </div>
+    </div>
+
+    <!-- Programs list -->
+    <div class="card card-stat mb-5">
+        <div class="card-header bg-white py-3">
+            <h5 class="fw-bold text-navy mb-0"><i class="fa-solid fa-book me-2 text-warning"></i> Accredited Degree Programs</h5>
+        </div>
+        <div class="table-responsive">
+            <table class="table table-hover align-middle mb-0">
+                <thead class="table-light">
+                    <tr>
+                        <th>Code</th>
+                        <th>Program Title</th>
+                        <th>Faculty</th>
+                        <th>Department</th>
+                        <th>Duration</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for q in qualifications %}
+                        <tr>
+                            <td><span class="badge bg-navy text-warning">{{ q.code }}</span></td>
+                            <td><strong>{{ q.title }}</strong></td>
+                            <td>{{ q.faculty }}</td>
+                            <td>{{ q.department }}</td>
+                            <td>{{ q.duration_years }} Years</td>
+                        </tr>
+                    {% empty %}
+                        <tr><td colspan="5" class="text-center text-muted py-3">No qualifications defined.</td></tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <!-- Digital Certificates list -->
+    <div class="card card-stat">
+        <div class="card-header bg-white py-3">
+            <h5 class="fw-bold text-navy mb-0"><i class="fa-solid fa-award me-2 text-warning"></i> Issued Digital Certificates</h5>
+        </div>
+        <div class="table-responsive">
+            <table class="table table-hover align-middle mb-0">
+                <thead class="table-light">
+                    <tr>
+                        <th>Certificate Number</th>
+                        <th>Graduate Name</th>
+                        <th>Student Number</th>
+                        <th>Issue Date</th>
+                        <th>Status</th>
+                        <th>Action</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for cert in certificates %}
+                        <tr>
+                            <td><code>{{ cert.certificate_number }}</code></td>
+                            <td><strong>{{ cert.student.full_name }}</strong></td>
+                            <td>{{ cert.student.student_number }}</td>
+                            <td>{{ cert.issue_date }}</td>
+                            <td>
+                                {% if cert.status == 'ACTIVE' %}
+                                    <span class="badge bg-success">ACTIVE</span>
+                                {% else %}
+                                    <span class="badge bg-danger">{{ cert.status }}</span>
+                                {% endif %}
+                            </td>
+                            <td>
+                                <a href="{% url 'certificate_detail' cert.certificate_number %}" class="btn btn-sm btn-msu-gold">
+                                    <i class="fa-solid fa-eye me-1"></i> View Certificate
+                                </a>
+                            </td>
+                        </tr>
+                    {% empty %}
+                        <tr><td colspan="6" class="text-center text-muted py-3">No certificates issued yet.</td></tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+{% endblock %}
