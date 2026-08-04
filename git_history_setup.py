@@ -31,6 +31,7 @@ def main():
         ("main", "Add requirements.txt and Python 3.13 dependencies"),
         ("main", "Configure settings.py and database fallback"),
         ("main", "Add vercel.json deployment configuration"),
+        ("main", "Add api/index.py Vercel serverless function entrypoint"),
         ("main", "Add CONTRIBUTING.md with team member assignments"),
         ("main", "Add README.md with system architecture overview"),
 
@@ -115,7 +116,7 @@ def main():
     run_git(["checkout", "main"])
     run_git(["merge", "develop", "--no-ff", "-m", "Release v1.0.0: Production-Ready MSU Qualification Verification System"])
 
-    print("\nGit History initialized with Vercel deployment support!")
+    print("\nGit History initialized with Vercel serverless entrypoint!")
 
 if __name__ == "__main__":
     main()
