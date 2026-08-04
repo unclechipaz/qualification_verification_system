@@ -5,7 +5,6 @@ Initializes Git repository and creates 40+ structured professional commits acros
 """
 import os
 import subprocess
-import sys
 
 def run_git(cmd_args, allow_fail=False):
     try:
@@ -23,8 +22,8 @@ def main():
 
     print("Initializing Git Repository...")
     run_git(["init"])
-    run_git(["config", "user.name", "Charlton Ndlovu"])
-    run_git(["config", "user.email", "charlton@msu.ac.zw"])
+    run_git(["config", "user.name", "unclechipaz"])
+    run_git(["config", "user.email", "unclechipaz@msu.ac.zw"])
 
     commits = [
         # Base commits on main
@@ -114,7 +113,7 @@ def main():
     run_git(["checkout", "main"])
     run_git(["merge", "develop", "--no-ff", "-m", "Release v1.0.0: Production-Ready MSU Qualification Verification System"])
 
-    print("\nGit History initialized with 40+ commits successfully!")
+    print("\nGit History initialized with 40+ commits for unclechipaz successfully!")
 
 if __name__ == "__main__":
     main()

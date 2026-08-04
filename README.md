@@ -3,7 +3,7 @@
 [![Python 3.13](https://img.shields.io/badge/Python-3.13-blue.svg)](https://www.python.org/)
 [![Django 5.0](https://img.shields.io/badge/Django-5.0-green.svg)](https://www.djangoproject.com/)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
-[![CI/CD Pipeline](https://github.com/midlands-state-university/qualification-verification-system/actions/workflows/ci_cd.yml/badge.svg)](.github/workflows/ci_cd.yml)
+[![CI/CD Pipeline](https://github.com/unclechipaz/qualification_verification_system/actions/workflows/ci_cd.yml/badge.svg)](.github/workflows/ci_cd.yml)
 
 A secure, production-ready Qualification Verification System developed for Midlands State University (MSU). The web application enables employers, universities, government institutions, and graduates to instantly verify academic credentials, detect fraud, inspect cryptographic digital hashes, and download official PDF verification statements.
 
@@ -43,7 +43,7 @@ A secure, production-ready Qualification Verification System developed for Midla
 
 | Member Name | Role | Core Responsibility |
 | :--- | :--- | :--- |
-| **Charlton** | Project Manager & DevOps Lead | Backend Core Architecture, Docker, CI/CD, Git Workflow |
+| **unclechipaz** | Project Manager & DevOps Lead | Backend Core Architecture, Docker, CI/CD, Git Workflow |
 | **Collen Simba** | Database Architect & Models | Schema Design, ORM Models, Database Seeding |
 | **Doreen** | Frontend & UI/UX Specialist | Bootstrap 5 Design, Templates, QR Scanner UI |
 | **Artwell** | QA & Documentation Lead | Automated Pytest Suite, UML Diagrams, User/Admin Manuals |
@@ -55,7 +55,7 @@ A secure, production-ready Qualification Verification System developed for Midla
 
 ```bash
 # Clone the repository
-git clone https://github.com/midlands-state-university/qualification-verification-system.git
+git clone https://github.com/unclechipaz/qualification_verification_system.git
 cd qualification_verification_system
 
 # Install dependencies

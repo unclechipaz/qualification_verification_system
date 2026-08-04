@@ -122,14 +122,6 @@
             box-shadow: 0 8px 32px 0 rgba(0, 43, 73, 0.15);
             border: 1px solid rgba(212, 175, 55, 0.2);
         }
-
-        .msu-seal-watermark {
-            opacity: 0.05;
-            position: absolute;
-            right: 5%;
-            bottom: 5%;
-            pointer-events: none;
-        }
     </style>
     {% block extra_css %}{% endblock %}
 </head>
@@ -180,7 +172,7 @@
                                 <i class="fa-solid fa-circle-user me-1"></i> {{ user.username }} ({{ user.get_role_display }})
                             </a>
                             <ul class="dropdown-menu dropdown-menu-end">
-                                <li><a class="dropdown-menu-item dropdown-item" href="{% url 'dashboard' %}"><i class="fa-solid fa-gauge me-2"></i> Dashboard</a></li>
+                                <li><a class="dropdown-item" href="{% url 'dashboard' %}"><i class="fa-solid fa-gauge me-2"></i> Dashboard</a></li>
                                 <li><hr class="dropdown-divider"></li>
                                 <li><a class="dropdown-item text-danger" href="{% url 'logout' %}"><i class="fa-solid fa-right-from-bracket me-2"></i> Logout</a></li>
                             </ul>
@@ -225,7 +217,7 @@
                 </div>
                 <div class="col-md-6 text-md-end">
                     <small>&copy; 2026 Midlands State University. Developed for SE Group Assignment.</small><br>
-                    <small class="text-warning">Team: Charlton | Collen Simba | Doreen | Artwell | Anesu</small>
+                    <small class="text-warning">Team: unclechipaz | Collen Simba | Doreen | Artwell | Anesu</small>
                 </div>
             </div>
         </div>
