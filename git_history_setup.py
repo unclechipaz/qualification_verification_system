@@ -63,7 +63,7 @@ def main():
         # feature/qualification-module
         ("feature/qualification-module", "Create Qualification and Certificate models"),
         ("feature/qualification-module", "Add digital signature SHA-256 hash generation"),
-        ("feature/qualification-module", "Implement QR Code generator utility"),
+        ("feature/qualification-module", "Implement serverless Base64 Data URI QR Code generator"),
         ("feature/qualification-module", "Create printable degree certificate template with MSU crest"),
         ("feature/qualification-module", "Add Certificate DRF API endpoint"),
 
@@ -89,6 +89,7 @@ def main():
 
         # feature/dashboard
         ("feature/dashboard", "Create Executive Admin and Registrar dashboard"),
+        ("feature/dashboard", "Add Registrar Quick Actions Hub and Student Registry links"),
         ("feature/dashboard", "Add Graduate self-service portal view"),
         ("feature/dashboard", "Implement audit trail middleware and log model"),
 
@@ -126,7 +127,7 @@ def main():
     run_git(["checkout", "main"])
     run_git(["merge", "develop", "--no-ff", "-m", "Release v1.0.0: Production-Ready MSU Qualification Verification System"])
 
-    print("\nGit History initialized with inline SVG logo!")
+    print("\nGit History initialized with Registrar Actions Hub!")
 
 if __name__ == "__main__":
     main()

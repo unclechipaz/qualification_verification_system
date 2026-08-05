@@ -70,7 +70,7 @@
                         Conferred at Gweru on <strong>{{ certificate.student.graduation_date }}</strong>
                     </p>
 
-                    <!-- Bottom Signatures & QR Code Section -->
+                    <!-- Bottom Signatures & Bulletproof QR Code Section -->
                     <div class="row align-items-center mt-5 pt-4 border-top">
                         <div class="col-4 text-center">
                             <div class="border-bottom border-dark pb-1 mb-1 mx-auto" style="max-width: 150px;">
@@ -79,10 +79,9 @@
                             <small class="text-muted font-uppercase">Vice-Chancellor</small>
                         </div>
                         <div class="col-4 text-center">
-                            {% if certificate.qr_code_image %}
-                                <img src="{{ certificate.qr_code_image.url }}" alt="QR Code" class="img-fluid border p-1 rounded" style="max-height: 110px;"><br>
-                                <small class="text-muted font-monospace" style="font-size: 0.7rem;">{{ certificate.certificate_number }}</small>
-                            {% endif %}
+                            <!-- Bulletproof Data URI QR Code -->
+                            <img src="{{ certificate.qr_code_base64 }}" alt="Certificate Verification QR Code" class="img-fluid border p-1 rounded" style="max-height: 110px;"><br>
+                            <small class="text-muted font-monospace" style="font-size: 0.7rem;">{{ certificate.certificate_number }}</small>
                         </div>
                         <div class="col-4 text-center">
                             <div class="border-bottom border-dark pb-1 mb-1 mx-auto" style="max-width: 150px;">
