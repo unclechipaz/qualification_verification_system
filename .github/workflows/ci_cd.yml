@@ -33,9 +33,19 @@ jobs:
           python -m pip install --upgrade pip
           pip install -r requirements.txt
 
-      - name: Run Pytest Suite
+      - name: Run Pytest Suite with Coverage
         run: |
           pytest --tb=short
+
+      - name: Upload Coverage Report
+        uses: actions/upload-artifact@v4
+        with:
+          name: coverage-report
+          path: htmlcov/
+
+      - name: Static Code Analysis (flake8)
+        run: |
+          flake8 backend tests --count --exit-zero
 
   docker-build:
     name: Build Docker Container Image

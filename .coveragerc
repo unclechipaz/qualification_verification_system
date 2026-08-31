@@ -1,0 +1,16 @@
+[run]
+source = backend
+omit =
+    */migrations/*
+    */venv/*
+    */.venv/*
+    backend/manage.py
+    backend/msu_qvs/wsgi.py
+    backend/msu_qvs/asgi.py
+
+[report]
+exclude_lines =
+    pragma: no cover
+    def __repr__
+    raise NotImplementedError
+skip_empty = True
