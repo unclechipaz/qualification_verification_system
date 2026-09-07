@@ -1,17 +1,17 @@
 # Midlands State University - Qualification Verification System
-## Group Contributions & Development Guidelines
+## Group Contributions & Team Role Assignments
 
 This repository represents the collaborative Software Engineering Group Assignment for Midlands State University (MSU).
 
-### Team Member Roles & Responsibilities
+### Core System Requirements & Team Member Assignments
 
-| Member Name | Primary Role | Assigned Modules & Tasks |
+| Member Name | Assigned Role | Core Requirement & Modules Assigned |
 | :--- | :--- | :--- |
-| **Charlton** | **Project Manager & DevOps Lead** | Project Architecture, Django Core setup, DevOps, Docker & Docker Compose, GitHub Actions CI/CD pipeline, Git workflow management. |
-| **Collen Simba** | **Database Architect & Data Engineer** | Entity-Relationship (ER) Modeling, PostgreSQL schema design, Django ORM Models (Users, Students, Qualifications, Certificates, Logs), Seed database scripts. |
-| **Doreen** | **Frontend Engineer & UI/UX Designer** | Bootstrap 5 UI design, Responsive HTML templates, Glassmorphism & MSU Theme styling, Interactive QR Scanner UI, Frontend Client Validation. |
-| **Artwell** | **QA & Documentation Engineer** | Unit Testing, Integration Testing, API Endpoint Testing, System Documentation, User & Admin Manuals, UML Diagrams (Sequence, Class, Activity, Use Case, Deployment). |
-| **Anesu** | **API Developer & Integration Specialist** | Django REST Framework (DRF) APIs, Verification Engine logic, AI Fraud Detection module, ReportLab PDF report generation, Deployment readiness. |
+| **Charlton** | **Project Manager & DevOps Lead** | Overall System Architecture, Django Core Configuration, Git Repository Management, Docker Containerization, CI/CD Pipeline (`.github/workflows/ci_cd.yml`), Vercel/Render Cloud Deployment. |
+| **Simba** | **Database & Qualification Registry Lead** | **Requirement 1: Register Qualifications & Certifications**. Database Schema Design, Django ORM Models (`Student`, `Qualification`, `Certificate`), Database Migrations, and Automated Seeding Script (`seed_db.py`). |
+| **Mncendisi** | **Search & Retrieval Specialist** | **Requirement 2: Search & Retrieve Qualification Records**. Multi-parameter Search Engine (`Certificate Number`, `Student Number`, `National ID`, `Name`), REST API Endpoints (`/api/students/`, `/api/qualifications/`), and Database Query Indexing. |
+| **Doreen** | **Verification & Frontend UI Specialist** | **Requirement 3: Verify Authenticity of Qualifications**. Public & Employer Verification Web Portals, Bootstrap 5 MSU Theme Layout, WebCam QR Code Scanner UI, Verification Status Stamps (`VERIFIED`, `REVOKED`, `INVALID`). |
+| **Cleopatra** | **Audit Trail & QA/Documentation Lead** | **Requirement 4: Maintain Auditable History of Verification Activities**. Audit Logging Middleware (`AuditLog`), Screening History Tracking, Pytest Automated Test Suite (`tests/`), System Manuals, and UML Diagrams. |
 
 ---
 
@@ -20,12 +20,11 @@ This repository represents the collaborative Software Engineering Group Assignme
 1. **Branching Strategy**:
    - `main`: Production-ready, stable releases.
    - `develop`: Integration branch for active development.
-   - `feature/*`: Specific feature branches (e.g. `feature/login`, `feature/verification`, `feature/api`).
+   - `feature/*`: Specific feature branches assigned per member (e.g. `feature/registration`, `feature/search`, `feature/verification`, `feature/audit-logs`).
 
 2. **Commit Standard**:
    - Use imperative mood: `Add Verification REST API endpoint`
-   - Include component scope prefix where appropriate: `[Students] Implement student registration serializer`
+   - Include component scope prefix: `[Students] Implement student registration serializer`
 
 3. **Pull Requests & Code Reviews**:
-   - All feature branches must be merged into `develop` via Pull Request.
-   - GitHub Actions CI/CD must pass all automated tests (`pytest`) before merge approval.
+   - All feature branches must be merged into `develop` via Pull Request before merging to `main`.

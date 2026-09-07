@@ -42,64 +42,42 @@ def main():
         ("main", "Add bulletproof inline SVG MSU Crest Logo component"),
         ("main", "Add vercel.json deployment configuration"),
         ("main", "Add root index.py Vercel serverless function entrypoint"),
-        ("main", "Add CONTRIBUTING.md with team member assignments"),
-        ("main", "Add README.md with system architecture overview"),
+        ("main", "Add CONTRIBUTING.md with team member assignments for Charlton, Simba, Mncendisi, Doreen, Cleopatra"),
+        ("main", "Add README.md with core system requirements and architecture"),
 
-        # feature/login
-        ("feature/login", "Add Custom User Model with RBAC roles"),
-        ("feature/login", "Implement authentication views and serializers"),
-        ("feature/login", "Add login and registration web templates"),
-        ("feature/login", "Implement token-based REST API login endpoint"),
-        ("feature/login", "Add custom role permissions for Admin and Registrar"),
-        ("feature/login", "Fix password validation and session persistence"),
+        # feature/registration (Simba & Charlton)
+        ("feature/registration", "Add Custom User Model with RBAC roles"),
+        ("feature/registration", "Implement qualification and student registration models"),
+        ("feature/registration", "Add student registration form template"),
+        ("feature/registration", "Implement token-based REST API login endpoint"),
+        ("feature/registration", "Add custom role permissions for Admin and Registrar"),
 
-        # feature/student-module
-        ("feature/student-module", "Create Student model with student number and national ID"),
-        ("feature/student-module", "Implement Student list and registration views"),
-        ("feature/student-module", "Add Student DRF ViewSet and API serializer"),
-        ("feature/student-module", "Add student registration form template"),
-        ("feature/student-module", "Enforce unique constraints on Student Number"),
+        # feature/search (Mncendisi)
+        ("feature/search", "Implement multi-parameter search engine for qualification records"),
+        ("feature/search", "Add student number and certificate number query indexing"),
+        ("feature/search", "Implement DRF search viewset and API endpoints"),
+        ("feature/search", "Enforce unique constraints on Student Number and National ID"),
 
-        # feature/qualification-module
-        ("feature/qualification-module", "Create Qualification and Certificate models"),
-        ("feature/qualification-module", "Add digital signature SHA-256 hash generation"),
-        ("feature/qualification-module", "Implement serverless Base64 Data URI QR Code generator"),
-        ("feature/qualification-module", "Create printable degree certificate template with MSU crest"),
-        ("feature/qualification-module", "Add Certificate DRF API endpoint"),
-
-        # feature/verification
-        ("feature/verification", "Implement VerificationLog model and search engine"),
+        # feature/verification (Doreen)
+        ("feature/verification", "Implement verification status logic (VERIFIED, REVOKED, INVALID)"),
         ("feature/verification", "Add public verification web portal and search view"),
         ("feature/verification", "Create ReportLab PDF verification report generator"),
-        ("feature/verification", "Add interactive camera QR scanner view"),
-        ("feature/verification", "Implement REST API /api/verify endpoint"),
-        ("feature/verification", "Add certificate revocation status handling"),
+        ("feature/verification", "Add interactive camera WebCam QR scanner view"),
+        ("feature/verification", "Implement Base64 Data URI QR code generator"),
 
-        # feature/employer
-        ("feature/employer", "Create Employer profile model and organization fields"),
-        ("feature/employer", "Implement Employer screening history portal"),
-        ("feature/employer", "Add CSV export feature for verification logs"),
-        ("feature/employer", "Implement employer verification history API"),
+        # feature/audit-history (Cleopatra)
+        ("feature/audit-history", "Implement AuditLog middleware tracking user activities"),
+        ("feature/audit-history", "Create employer verification screening history portal"),
+        ("feature/audit-history", "Add CSV export feature for verification logs"),
+        ("feature/audit-history", "Develop AIFraudDetector multi-factor anomaly engine"),
 
-        # feature/ai-fraud
-        ("feature/ai-fraud", "Develop AIFraudDetector multi-factor anomaly engine"),
-        ("feature/ai-fraud", "Add rate anomaly detection for IP address scanning"),
-        ("feature/ai-fraud", "Create AI Fraud Analytics dashboard view"),
-        ("feature/ai-fraud", "Add REST API /api/fraud-analytics endpoint"),
-
-        # feature/dashboard
-        ("feature/dashboard", "Create Executive Admin and Registrar dashboard"),
-        ("feature/dashboard", "Add Registrar Quick Actions Hub and Student Registry links"),
-        ("feature/dashboard", "Add Graduate self-service portal view"),
-        ("feature/dashboard", "Implement audit trail middleware and log model"),
-
-        # feature/testing
+        # feature/testing (Cleopatra)
         ("feature/testing", "Configure pytest.ini and test runner settings"),
         ("feature/testing", "Add authentication unit and API tests"),
         ("feature/testing", "Add verification engine tests"),
         ("feature/testing", "Add AI fraud detection test cases"),
 
-        # DevOps & Vercel
+        # DevOps & Deployment (Charlton)
         ("main", "Create Dockerfile for Python 3.13 containerization"),
         ("main", "Add docker-compose.yml for Django and PostgreSQL"),
         ("main", "Configure GitHub Actions CI/CD workflow pipeline"),
@@ -127,7 +105,7 @@ def main():
     run_git(["checkout", "main"])
     run_git(["merge", "develop", "--no-ff", "-m", "Release v1.0.0: Production-Ready MSU Qualification Verification System"])
 
-    print("\nGit History initialized with Registrar Actions Hub!")
+    print("\nGit History initialized for Charlton, Simba, Mncendisi, Doreen, Cleopatra!")
 
 if __name__ == "__main__":
     main()

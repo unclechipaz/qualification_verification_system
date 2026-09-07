@@ -9,22 +9,31 @@ A secure, production-ready Qualification Verification System developed for Midla
 
 ---
 
-## 🎓 Key Features
+## 🎓 Core System Objectives & Features
 
-1. **Multi-Role Authentication & Access Control (RBAC)**:
-   - Administrator, Registrar, Graduate, Employer, and Public Verifier roles.
-2. **Student & Credential Management**:
+1. **Register Qualifications or Certifications**:
    - Register graduates with Student Number, National ID, Full Name, Programme, Faculty, Degree Classification, and Graduation Date.
-3. **Cryptographic Certificate Engine**:
-   - Automatic generation of unique Certificate Numbers (`MSU-2024-BSC-CS-0001`), Verification Codes, SHA-256 integrity hashes, and QR codes.
-4. **Multi-Parameter Verification**:
-   - Verify credentials via Certificate Number, Student ID, Verification Code, National ID, Name, or Live Camera QR Code Scanner.
-5. **AI Fraud Detection Engine**:
-   - Automated anomaly detection identifying burst IP rate scanning, search attempts on revoked credentials, and suspect client signatures.
-6. **Dynamic PDF Generation**:
-   - Official printable PDF Verification Reports and Degree Certificates generated via ReportLab.
-7. **DevOps & Cloud Ready**:
-   - `Dockerfile`, `docker-compose.yml` (PostgreSQL + Django), GitHub Actions CI/CD pipeline (`.github/workflows/ci_cd.yml`), and pre-seeded database.
+   - Automatic generation of unique Certificate Numbers (`MSU-2024-BSC-CS-0001`), Verification Codes, SHA-256 integrity hashes, and Base64 QR codes.
+2. **Search and Retrieve Qualification Records**:
+   - Multi-parameter search matching queries against Certificate Number, Student Number, Verification Code, National ID, or Full Name.
+3. **Verify Authenticity of Qualifications**:
+   - Live WebCam QR Code Scanner and instant verification portal returning statuses (`VERIFIED`, `REVOKED`, `INVALID`, `PENDING`).
+   - AI Fraud Detection Engine computing an anomaly risk score (0–100) to detect suspicious scanning bursts or revoked credential checks.
+4. **Maintain Auditable History of Verification Activities**:
+   - Comprehensive `AuditLog` middleware tracking user actions, IP addresses, search queries, and timestamps.
+   - Downloadable PDF Verification Statements and Employer Screening History CSV exports.
+
+---
+
+## 👥 Group Contributions & Roles (5 Team Members)
+
+| Member Name | Role | Core Responsibility |
+| :--- | :--- | :--- |
+| **Charlton** | Project Manager & DevOps Lead | Architecture, Django Setup, Docker, CI/CD, Vercel Cloud Deployment |
+| **Simba** | Database & Qualification Registry Lead | Requirement 1: Register Qualifications & Certifications, Database Schema, ORM Models, Seeding Script |
+| **Mncendisi** | Search & Retrieval Specialist | Requirement 2: Search & Retrieve Qualification Records, Multi-parameter Search Logic, DRF APIs |
+| **Doreen** | Verification & Frontend UI Specialist | Requirement 3: Verify Authenticity of Qualifications, Bootstrap 5 UI, WebCam QR Scanner |
+| **Cleopatra** | Audit Trail & QA/Documentation Lead | Requirement 4: Maintain Auditable History, AuditLog Middleware, Automated Pytest Suite, UML Diagrams |
 
 ---
 
@@ -35,19 +44,7 @@ A secure, production-ready Qualification Verification System developed for Midla
 - **Database**: PostgreSQL 16 (SQLite3 fallback)
 - **Document Processing**: ReportLab (PDF), Pillow, qrcode
 - **Testing**: Pytest, Django Test Framework
-- **DevOps**: Docker, Docker Compose, GitHub Actions CI/CD
-
----
-
-## 👥 Group Contributions & Roles
-
-| Member Name | Role | Core Responsibility |
-| :--- | :--- | :--- |
-| **unclechipaz** | Project Manager & DevOps Lead | Backend Core Architecture, Docker, CI/CD, Git Workflow |
-| **Collen Simba** | Database Architect & Models | Schema Design, ORM Models, Database Seeding |
-| **Doreen** | Frontend & UI/UX Specialist | Bootstrap 5 Design, Templates, QR Scanner UI |
-| **Artwell** | QA & Documentation Lead | Automated Pytest Suite, UML Diagrams, User/Admin Manuals |
-| **Anesu** | API & Integration Developer | DRF REST APIs, AI Fraud Engine, ReportLab PDF Generator |
+- **DevOps**: Docker, Docker Compose, GitHub Actions CI/CD, Vercel
 
 ---
 
