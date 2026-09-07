@@ -1,14 +1,20 @@
 import os
+import sys
+import shutil
 from pathlib import Path
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
+# Ensure BASE_DIR is in sys.path
+if str(BASE_DIR) not in sys.path:
+    sys.path.insert(0, str(BASE_DIR))
+
 SECRET_KEY = os.environ.get('DJANGO_SECRET_KEY', 'django-insecure-msu-qvs-super-secret-key-2026-prod-ready')
 
-DEBUG = os.environ.get('DEBUG', 'True').lower() == 'true'
+DEBUG = os.environ.get('DEBUG', 'False').lower() == 'true' if os.environ.get('VERCEL') == '1' else True
 
-ALLOWED_HOSTS = ['*']
+ALLOWED_HOSTS = ['.vercel.app', 'localhost', '127.0.0.1', '*']
 
 # Application definition
 INSTALLED_APPS = [
@@ -68,10 +74,8 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'msu_qvs.wsgi.application'
 
-# Database
-# Default to SQLite for portable dev/demo, allow PostgreSQL via ENV
+# Database Configuration
 DB_ENGINE = os.environ.get('DB_ENGINE', 'django.db.backends.sqlite3')
-DB_NAME = os.environ.get('DB_NAME', str(BASE_DIR / 'db.sqlite3'))
 
 if DB_ENGINE == 'django.db.backends.postgresql':
     DATABASES = {
@@ -85,10 +89,27 @@ if DB_ENGINE == 'django.db.backends.postgresql':
         }
     }
 else:
+    # Handle SQLite database path safely on Vercel Serverless
+    default_db_path = BASE_DIR / 'db.sqlite3'
+    root_db_path = BASE_DIR.parent / 'db.sqlite3'
+
+    target_db = default_db_path if default_db_path.exists() else root_db_path
+
+    if os.environ.get('VERCEL') == '1' or 'VERCEL' in os.environ:
+        tmp_db = Path('/tmp/db.sqlite3')
+        if not tmp_db.exists() and target_db.exists():
+            try:
+                shutil.copyfile(target_db, tmp_db)
+            except Exception:
+                pass
+        db_file = str(tmp_db) if tmp_db.exists() else str(target_db)
+    else:
+        db_file = str(target_db)
+
     DATABASES = {
         'default': {
             'ENGINE': 'django.db.backends.sqlite3',
-            'NAME': DB_NAME,
+            'NAME': os.environ.get('DB_NAME', db_file),
         }
     }
 
@@ -116,7 +137,7 @@ STATICFILES_DIRS = [BASE_DIR / 'static']
 
 # Media files (Certificates, QR Codes, Reports)
 MEDIA_URL = '/media/'
-MEDIA_ROOT = BASE_DIR / 'media'
+MEDIA_ROOT = Path('/tmp/media') if os.environ.get('VERCEL') == '1' else BASE_DIR / 'media'
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
@@ -136,6 +157,6 @@ REST_FRAMEWORK = {
 # CORS configuration
 CORS_ALLOW_ALL_ORIGINS = True
 
-# Email backend (Console for testing/demo)
+# Email backend
 EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
 DEFAULT_FROM_EMAIL = 'verifications@msu.ac.zw'

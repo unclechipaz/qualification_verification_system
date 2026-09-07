@@ -1,18 +1,54 @@
 {% extends 'base.html' %}
 
-{% block title %}Administrator Dashboard - MSU QVS{% endblock %}
+{% block title %}Administrator & Registrar Dashboard - MSU QVS{% endblock %}
 
 {% block content %}
 <div class="container py-5">
     <!-- Header -->
-    <div class="d-flex justify-content-between align-items-center mb-4">
+    <div class="d-flex flex-column flex-md-row justify-content-between align-items-md-center mb-4 gap-3">
         <div>
-            <h2 class="fw-bold text-navy mb-1"><i class="fa-solid fa-gauge text-warning me-2"></i> System Executive Dashboard</h2>
-            <p class="text-muted mb-0">Midlands State University Qualification Verification Overview</p>
+            <span class="badge bg-warning text-dark mb-2"><i class="fa-solid fa-building-columns"></i> MSU Academic Registry</span>
+            <h2 class="fw-bold text-navy mb-1"><i class="fa-solid fa-gauge text-warning me-2"></i> System Executive & Registrar Dashboard</h2>
+            <p class="text-muted mb-0">Manage student records, issue digital certificates, revoke credentials, and monitor verifications.</p>
         </div>
         <div class="d-flex gap-2">
-            <a href="{% url 'student_create' %}" class="btn btn-msu-gold"><i class="fa-solid fa-user-plus me-1"></i> Register Student</a>
-            <a href="{% url 'reports' %}" class="btn btn-msu-navy"><i class="fa-solid fa-chart-pie me-1"></i> Reports</a>
+            <a href="{% url 'student_create' %}" class="btn btn-msu-gold px-3 py-2 fw-bold"><i class="fa-solid fa-plus-circle me-1"></i> Issue New Certificate</a>
+            <a href="{% url 'reports' %}" class="btn btn-msu-navy px-3 py-2 fw-bold"><i class="fa-solid fa-chart-pie me-1"></i> Reports</a>
+        </div>
+    </div>
+
+    <!-- REGISTRAR QUICK ACTIONS HUB -->
+    <div class="card card-stat bg-white p-4 mb-4 border-top border-4 border-warning">
+        <h5 class="fw-bold text-navy mb-3"><i class="fa-solid fa-bolt text-warning me-2"></i> Registrar & Administrative Quick Actions</h5>
+        <div class="row g-3">
+            <div class="col-md-3">
+                <a href="{% url 'student_create' %}" class="btn btn-outline-primary w-100 p-3 text-start h-100 shadow-sm text-decoration-none">
+                    <div class="fs-4 text-primary mb-1"><i class="fa-solid fa-certificate"></i></div>
+                    <strong class="d-block text-navy">Issue Certificate</strong>
+                    <small class="text-muted">Register a graduate & generate certificate + QR code</small>
+                </a>
+            </div>
+            <div class="col-md-3">
+                <a href="{% url 'student_list' %}" class="btn btn-outline-success w-100 p-3 text-start h-100 shadow-sm text-decoration-none">
+                    <div class="fs-4 text-success mb-1"><i class="fa-solid fa-user-graduate"></i></div>
+                    <strong class="d-block text-navy">Student Registry</strong>
+                    <small class="text-muted">Search, filter, and view all registered MSU graduates</small>
+                </a>
+            </div>
+            <div class="col-md-3">
+                <a href="{% url 'qualification_list' %}" class="btn btn-outline-warning w-100 p-3 text-start h-100 shadow-sm text-decoration-none">
+                    <div class="fs-4 text-warning mb-1"><i class="fa-solid fa-award"></i></div>
+                    <strong class="d-block text-navy">Issued Certificates</strong>
+                    <small class="text-muted">View printable degrees or revoke/suspend credentials</small>
+                </a>
+            </div>
+            <div class="col-md-3">
+                <a href="{% url 'fraud_analytics' %}" class="btn btn-outline-danger w-100 p-3 text-start h-100 shadow-sm text-decoration-none">
+                    <div class="fs-4 text-danger mb-1"><i class="fa-solid fa-shield-cat"></i></div>
+                    <strong class="d-block text-navy">AI Fraud Analytics</strong>
+                    <small class="text-muted">Inspect suspicious queries & IP rate anomalies</small>
+                </a>
+            </div>
         </div>
     </div>
 

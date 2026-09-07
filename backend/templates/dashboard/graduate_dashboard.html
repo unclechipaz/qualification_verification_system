@@ -39,9 +39,8 @@
 
                     <div class="text-center p-4 bg-white border rounded-3 mb-4">
                         <h5 class="fw-bold text-navy mb-3">Your Digital Verification QR Code</h5>
-                        {% if certificate.qr_code_image %}
-                            <img src="{{ certificate.qr_code_image.url }}" alt="QR Code" class="img-fluid border p-2 rounded mb-3" style="max-height: 180px;">
-                        {% endif %}
+                        <!-- Bulletproof Base64 Data URI QR Code -->
+                        <img src="{{ certificate.qr_code_base64 }}" alt="QR Code" class="img-fluid border p-2 rounded mb-3" style="max-height: 180px;"><br>
                         <p class="text-muted small">Share this QR code or certificate number with prospective employers for instant verification.</p>
                     </div>
 

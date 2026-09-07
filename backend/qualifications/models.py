@@ -1,5 +1,8 @@
 import uuid
 import hashlib
+import io
+import base64
+import qrcode
 from django.db import models
 from students.models import Student
 
@@ -45,6 +48,26 @@ class Certificate(models.Model):
             self.digital_signature_hash = hashlib.sha256(raw_data.encode('utf-8')).hexdigest()
             
         super().save(*args, **kwargs)
+
+    @property
+    def qr_code_base64(self):
+        """Generates self-contained Base64 Data URI QR Code (100% serverless & Vercel compatible)."""
+        verify_url = f"https://qualification-verification-system.vercel.app/verify/?code={self.verification_code}"
+        
+        qr = qrcode.QRCode(
+            version=1,
+            error_correction=qrcode.constants.ERROR_CORRECT_M,
+            box_size=8,
+            border=3,
+        )
+        qr.add_data(verify_url)
+        qr.make(fit=True)
+        img = qr.make_image(fill_color="#002B49", back_color="white")
+        
+        buffer = io.BytesIO()
+        img.save(buffer, format="PNG")
+        b64_str = base64.b64encode(buffer.getvalue()).decode('utf-8')
+        return f"data:image/png;base64,{b64_str}"
 
     def __str__(self):
         return f"Certificate {self.certificate_number} - {self.student.full_name}"
