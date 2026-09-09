@@ -1,7 +1,10 @@
 from django.shortcuts import render, redirect
 from django.contrib.auth import login, logout, authenticate
+from django.contrib.auth.password_validation import validate_password
+from django.core.exceptions import ValidationError
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
+from django.utils.http import url_has_allowed_host_and_scheme
 from rest_framework import status, views, viewsets
 from rest_framework.response import Response
 from rest_framework.authtoken.models import Token
@@ -9,6 +12,11 @@ from rest_framework.permissions import AllowAny, IsAuthenticated
 from .models import User
 from .serializers import UserSerializer, RegisterSerializer, LoginSerializer
 from .permissions import IsAdminOrRegistrar
+
+PUBLIC_REGISTRATION_ROLES = {
+    User.Role.EMPLOYER,
+    User.Role.PUBLIC_VERIFIER,
+}
 
 # Web Views
 def login_view(request):
@@ -32,7 +40,13 @@ def login_view(request):
             login(request, user)
             messages.success(request, f"Welcome back, {user.first_name or user.username}!")
             next_url = request.GET.get('next')
-            return redirect(next_url if next_url else 'dashboard')
+            if next_url and url_has_allowed_host_and_scheme(
+                url=next_url,
+                allowed_hosts={request.get_host()},
+                require_https=request.is_secure(),
+            ):
+                return redirect(next_url)
+            return redirect('dashboard')
         else:
             messages.error(request, "Invalid username/email or password.")
             
@@ -47,7 +61,7 @@ def register_view(request):
         email = request.POST.get('email')
         password = request.POST.get('password')
         confirm_password = request.POST.get('confirm_password')
-        role = request.POST.get('role', User.Role.EMPLOYER)
+        role = request.POST.get('role', User.Role.PUBLIC_VERIFIER)
         organization_name = request.POST.get('organization_name', '')
         national_id = request.POST.get('national_id', '')
         first_name = request.POST.get('first_name', '')
@@ -55,6 +69,10 @@ def register_view(request):
         
         if password != confirm_password:
             messages.error(request, "Passwords do not match.")
+            return render(request, 'register.html')
+
+        if role not in PUBLIC_REGISTRATION_ROLES:
+            messages.error(request, "The selected account role is not available for public registration.")
             return render(request, 'register.html')
             
         if User.objects.filter(username=username).exists():
@@ -64,7 +82,23 @@ def register_view(request):
         if email and User.objects.filter(email=email).exists():
             messages.error(request, "Email is already registered.")
             return render(request, 'register.html')
-            
+
+        candidate_user = User(
+            username=username,
+            email=email,
+            first_name=first_name,
+            last_name=last_name,
+            role=role,
+            organization_name=organization_name,
+            national_id=national_id if national_id else None,
+        )
+        try:
+            validate_password(password, user=candidate_user)
+        except ValidationError as exc:
+            for error in exc.messages:
+                messages.error(request, error)
+            return render(request, 'register.html')
+
         user = User.objects.create_user(
             username=username,
             email=email,
