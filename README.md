@@ -59,7 +59,7 @@ These assignments describe responsibilities, not verified contribution counts.
 | Cleopatra | Audit Trail and QA/Documentation Lead | Requirement 4: activity history, tests, manuals and diagrams |
 
 ## Documentation
-
+- [Changelog](CHANGELOG.md)
 - [Architecture and implementation limits](docs/ARCHITECTURE.md)
 - [API reference](docs/API_DOCUMENTATION.md)
 - [Data model and UML diagrams](docs/UML_DIAGRAMS.md)
