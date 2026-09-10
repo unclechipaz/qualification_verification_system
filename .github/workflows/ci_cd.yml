@@ -2,7 +2,7 @@ name: MSU QVS CI/CD Pipeline
 
 on:
   push:
-    branches: [ main, develop, 'feature/*' ]
+    branches: [ main, develop, 'feature/*', 'fix/*' ]
   pull_request:
     branches: [ main, develop ]
 
@@ -10,6 +10,8 @@ jobs:
   test-and-lint:
     name: Build, Lint & Test (Python 3.13)
     runs-on: ubuntu-latest
+    env:
+      PYTHONPATH: ${{ github.workspace }}/backend:${{ github.workspace }}
 
     steps:
       - name: Checkout Code
@@ -21,7 +23,7 @@ jobs:
           python-version: '3.13'
 
       - name: Cache dependencies
-        uses: actions/cache@v3
+        uses: actions/cache@v4
         with:
           path: ~/.cache/pip
           key: ${{ runner.os }}-pip-${{ hashFiles('requirements.txt') }}
@@ -35,7 +37,7 @@ jobs:
 
       - name: Run Pytest Suite
         run: |
-          pytest --tb=short
+          python -m pytest --tb=short
 
   docker-build:
     name: Build Docker Container Image

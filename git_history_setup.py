@@ -43,7 +43,7 @@ def main():
         ("main", "Add vercel.json deployment configuration"),
         ("main", "Add root index.py Vercel serverless function entrypoint"),
         ("main", "Add CONTRIBUTING.md with team member assignments for Charlton, Simba, Mncendisi, Doreen, Cleopatra"),
-        ("main", "Add README.md with core system requirements and architecture"),
+        ("main", "Add README.md with system architecture overview"),
 
         # feature/registration (Simba & Charlton)
         ("feature/registration", "Add Custom User Model with RBAC roles"),
@@ -77,7 +77,11 @@ def main():
         ("feature/testing", "Add verification engine tests"),
         ("feature/testing", "Add AI fraud detection test cases"),
 
-        # DevOps & Deployment (Charlton)
+        # fix/ci-pytest-import-path (Charlton)
+        ("fix/ci-pytest-import-path", "Fix CI pytest import path to use python -m pytest and set PYTHONPATH"),
+        ("fix/ci-pytest-import-path", "Update pytest.ini pythonpath = . backend"),
+
+        # DevOps & Vercel
         ("main", "Create Dockerfile for Python 3.13 containerization"),
         ("main", "Add docker-compose.yml for Django and PostgreSQL"),
         ("main", "Configure GitHub Actions CI/CD workflow pipeline"),
@@ -105,7 +109,7 @@ def main():
     run_git(["checkout", "main"])
     run_git(["merge", "develop", "--no-ff", "-m", "Release v1.0.0: Production-Ready MSU Qualification Verification System"])
 
-    print("\nGit History initialized for Charlton, Simba, Mncendisi, Doreen, Cleopatra!")
+    print("\nGit History initialized with CI Pytest Fix branch!")
 
 if __name__ == "__main__":
     main()
