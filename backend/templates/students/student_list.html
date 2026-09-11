@@ -45,7 +45,7 @@
                         <tr>
                             <td><strong>{{ student.student_number }}</strong></td>
                             <td>{{ student.full_name }}</td>
-                            <td><small class="text-muted">{{ student.national_id }}</small></td>
+                            <td><small class="text-muted">{{ student.masked_national_id|default:student.national_id }}</small></td>
                             <td>
                                 <div>{{ student.programme }}</div>
                                 <small class="text-muted">{{ student.faculty }}</small>

@@ -14,7 +14,7 @@
                         <div class="col-md-9">
                             <div class="input-group">
                                 <span class="input-group-text bg-white"><i class="fa-solid fa-magnifying-glass text-warning"></i></span>
-                                <input type="text" name="query" class="form-control" placeholder="Search by Certificate Number, Student Number, or Code..." value="{{ query }}">
+                                <input type="text" name="query" class="form-control" placeholder="Search by Certificate Number or Verification Code..." value="{{ query }}">
                             </div>
                         </div>
                         <div class="col-md-3">
@@ -39,7 +39,7 @@
                                     <i class="fa-solid fa-shield-check me-2"></i> QUALIFICATION VERIFIED & VALID
                                 </span>
                                 <h2 class="fw-bold text-navy mb-0">{{ certificate.student.full_name }}</h2>
-                                <p class="text-muted mb-0">Student Number: <strong>{{ certificate.student.student_number }}</strong> | National ID: {{ certificate.student.national_id }}</p>
+                                <p class="text-muted mb-0">Student Number: <strong>{{ certificate.student.student_number }}</strong></p>
                             </div>
                             <div class="mt-3 mt-md-0 text-center">
                                 <!-- Self-Contained Serverless Base64 QR Code -->
@@ -133,7 +133,7 @@
                         <div class="alert alert-warning max-width-600 mx-auto text-start mb-4">
                             <strong><i class="fa-solid fa-triangle-exclamation me-1"></i> Verification Advisory:</strong>
                             <ul class="mb-0 ps-3 mt-1">
-                                <li>Check if the Certificate Number or Student ID was typed correctly.</li>
+                                <li>Check if the Certificate Number or Verification Code was typed correctly.</li>
                                 <li>Ensure you are scanning an official Midlands State University certificate.</li>
                                 <li>If you suspect fraud, contact <code>verifications@msu.ac.zw</code>.</li>
                             </ul>

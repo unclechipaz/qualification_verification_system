@@ -4,6 +4,7 @@ from django.contrib import messages
 from django.db.models import Q
 from rest_framework import viewsets, filters
 from authentication.permissions import IsAdminOrRegistrar
+from verification.utils import mask_national_id
 from .models import Student
 from .serializers import StudentSerializer
 
@@ -23,6 +24,10 @@ def student_list_view(request):
             Q(full_name__icontains=query) |
             Q(programme__icontains=query)
         )
+
+    # Attach presentation masked_national_id to each student (FR-SRCH-07)
+    for student in students:
+        student.masked_national_id = mask_national_id(student.national_id)
 
     return render(request, 'students/student_list.html', {
         'students': students,

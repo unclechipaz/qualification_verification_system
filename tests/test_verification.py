@@ -47,10 +47,12 @@ class TestVerificationEngine:
 
     def test_verification_by_student_number(self, sample_data):
         student, cert = sample_data
-        found_cert, search_type = verify_qualification('R209999Z')
+        found_cert, search_type = verify_qualification(
+            student.student_number,
+            is_internal=True
+        )
         assert found_cert is not None
         assert found_cert.certificate_number == 'MSU-2024-TEST-0001'
-
     def test_invalid_verification_query(self):
         found_cert, search_type = verify_qualification('NONEXISTENT-CODE')
         assert found_cert is None
