@@ -65,7 +65,7 @@ Registration does not create an `Employer` profile, approve a company, issue a c
 
 This endpoint allows anonymous requests. Sending a valid token associates the resulting verification log with that user.
 
-Submit a nonempty, trimmed string using `query`, `code` or `certificate_number`. If more than one is supplied, the code selects the first truthy value in that order.
+Submit a nonempty string (up to 150 characters) using `query`, `code` or `certificate_number`. If more than one is supplied, the code selects the first provided value in that order. Leading and trailing whitespace is automatically stripped.
 
 ```json
 {"query": "MSU-2024-BSC-CS-0001"}
@@ -79,7 +79,7 @@ The lookup order is:
 4. Exact national ID, ignoring case.
 5. Partial student name, ignoring case.
 
-The first certificate match is returned. There is no multiple-match selection, document upload, OCR or cryptographic signature validation. Whitespace-only and non-string inputs are not robustly validated; clients should validate their inputs.
+The first certificate match is returned. There is no multiple-match selection, document upload, OCR or cryptographic signature validation. The endpoint validates input types and length: non-object request bodies, missing, empty, or whitespace-only queries, non-string types (including booleans, numbers, lists, and objects), and queries exceeding 150 characters are rejected with controlled HTTP 400 Bad Request responses.
 
 | Condition | HTTP status | Body `status` |
 | --- | --- | --- |
@@ -87,9 +87,10 @@ The first certificate match is returned. There is no multiple-match selection, d
 | Matching revoked certificate | 200 | `REVOKED` |
 | Matching suspended certificate | 200 | `PENDING` |
 | No matching certificate | 404 | `INVALID` |
-| No accepted input value | 400 | An `error` message instead of a verification result |
+| Missing, empty, whitespace-only, non-string, overlength query, or malformed body | 400 | An `error` message instead of a verification result |
 
 HTTP 200 alone does not mean a qualification is valid: inspect the body status.
+
 
 Every processed verification result contains:
 
