@@ -31,12 +31,49 @@ def qr_scanner_view(request):
     """Interactive Web UI Camera QR Scanner."""
     return render(request, 'qr_scanner.html')
 
+MAX_VERIFICATION_QUERY_LENGTH = 150
+
+def validate_verification_query(raw_query):
+    """
+    Validates the query for qualification verification.
+
+    Rules:
+    - Must not be None.
+    - Must be a string (rejects booleans, integers, floats, lists, dicts, etc.).
+    - Must not be empty or spaces-only.
+    - Must not exceed MAX_VERIFICATION_QUERY_LENGTH (150 chars).
+
+    Returns:
+        tuple: (is_valid: bool, cleaned_query_or_error: str)
+    """
+    if raw_query is None:
+        return False, 'Parameter "query", "code", or "certificate_number" is required.'
+
+    # Must be a string and not a boolean (bool is a subclass of int in Python)
+    if isinstance(raw_query, bool) or not isinstance(raw_query, str):
+        return False, 'Query parameter must be a string.'
+
+    cleaned = raw_query.strip()
+    if not cleaned:
+        return False, 'Query parameter cannot be empty or spaces only.'
+
+    if len(cleaned) > MAX_VERIFICATION_QUERY_LENGTH:
+        return False, f'Query exceeds maximum length of {MAX_VERIFICATION_QUERY_LENGTH} characters.'
+
+    return True, cleaned
+
 def verify_qualification(query_string, search_type=None):
     """
     Core Verification Engine Logic.
     Finds certificate by cert_number, verification_code, student_number, national_id, or name.
     """
+    if isinstance(query_string, bool) or not isinstance(query_string, str):
+        return None, search_type or VerificationLog.SearchType.CERTIFICATE_NUMBER
+
     query_string = query_string.strip()
+    if not query_string or len(query_string) > MAX_VERIFICATION_QUERY_LENGTH:
+        return None, search_type or VerificationLog.SearchType.CERTIFICATE_NUMBER
+
     cert = None
     
     # 1. Direct Certificate Number match
@@ -59,7 +96,7 @@ def verify_qualification(query_string, search_type=None):
     if cert:
         return cert, VerificationLog.SearchType.NATIONAL_ID
 
-    # 5. Full Name fuzzy match
+    # 5. Full Name fuzzy match (only non-empty query reaches here)
     cert = Certificate.objects.filter(student__full_name__icontains=query_string).select_related('student', 'qualification').first()
     if cert:
         return cert, VerificationLog.SearchType.NAME
@@ -68,11 +105,27 @@ def verify_qualification(query_string, search_type=None):
 
 def verify_view(request):
     """Web view to process qualification verification search."""
-    query = request.GET.get('query', '').strip() or request.GET.get('code', '').strip() or request.GET.get('cert', '').strip()
-    
-    if not query:
+    raw_query = None
+    for key in ('query', 'code', 'cert'):
+        val = request.GET.get(key)
+        if val is not None:
+            raw_query = val
+            break
+
+    if raw_query is None:
         return render(request, 'verify.html', {'error': 'Please enter a Certificate Number, Student Number, or Verification Code.'})
 
+    is_valid, result = validate_verification_query(raw_query)
+    if not is_valid:
+        if 'empty or spaces only' in result or 'required' in result:
+            error_msg = 'Please enter a Certificate Number, Student Number, or Verification Code.'
+        elif 'maximum length' in result:
+            error_msg = f'Verification query cannot exceed {MAX_VERIFICATION_QUERY_LENGTH} characters.'
+        else:
+            error_msg = 'Invalid verification query. Please enter a valid search string.'
+        return render(request, 'verify.html', {'error': error_msg})
+
+    query = result
     cert, determined_search_type = verify_qualification(query)
     ip_address = get_client_ip(request)
     user_agent = request.META.get('HTTP_USER_AGENT', '')
@@ -139,10 +192,33 @@ class APIVerifyView(APIView):
     permission_classes = [permissions.AllowAny]
 
     def post(self, request):
-        query = request.data.get('query') or request.data.get('code') or request.data.get('certificate_number')
-        if not query:
-            return Response({'error': 'Parameter "query", "code", or "certificate_number" is required.'}, status=status.HTTP_400_BAD_REQUEST)
+        if not isinstance(request.data, dict):
+            return Response(
+                {'error': 'Invalid request body. Expected a JSON object.'},
+                status=status.HTTP_400_BAD_REQUEST
+            )
 
+        raw_query = None
+        has_key = False
+        for key in ('query', 'code', 'certificate_number'):
+            if key in request.data:
+                has_key = True
+                val = request.data[key]
+                if val is not None:
+                    raw_query = val
+                    break
+
+        if not has_key or raw_query is None:
+            return Response(
+                {'error': 'Parameter "query", "code", or "certificate_number" is required.'},
+                status=status.HTTP_400_BAD_REQUEST
+            )
+
+        is_valid, result = validate_verification_query(raw_query)
+        if not is_valid:
+            return Response({'error': result}, status=status.HTTP_400_BAD_REQUEST)
+
+        query = result
         cert, search_type = verify_qualification(query)
         ip_address = get_client_ip(request)
         user_agent = request.META.get('HTTP_USER_AGENT', '')
