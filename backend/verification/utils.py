@@ -1,5 +1,6 @@
 import os
 import io
+import re
 import qrcode
 from PIL import Image as PILImage
 from django.core.files.base import ContentFile
@@ -9,6 +10,56 @@ from reportlab.pdfgen import canvas
 from reportlab.lib import colors
 from reportlab.platypus import SimpleDocTemplate, Paragraph, Spacer, Table, TableStyle, Image as RLImage
 from reportlab.lib.styles import getSampleStyleSheet, ParagraphStyle
+
+def is_national_id_format(value: str) -> bool:
+    """
+    Checks if a string matches typical Zimbabwe National ID formats:
+    e.g., '63-1234567-B-07', '63-1234567 B 07', '631234567B07'.
+    """
+    if not isinstance(value, str):
+        return False
+    val = value.strip()
+    pattern = r'^\d{2}[-\s]?\d{6,8}[-\s]?[A-Za-z][-\s]?\d{2}$'
+    return bool(re.match(pattern, val))
+
+def mask_national_id(national_id: str) -> str:
+    """
+    Masks sensitive National ID values for display in ordinary result lists,
+    serializers, PDF reports, and verification logs (FR-SRCH-07).
+    
+    Standard format:
+      '63-1234567-B-07' -> '63-*******-B-07'
+    Generic fallback:
+      Preserves the first 2 and last 4 characters, masking inner characters with '*'.
+    """
+    if not national_id or not isinstance(national_id, str):
+        return ""
+
+    cleaned = national_id.strip()
+    if not cleaned:
+        return ""
+
+    # Check for hyphen-separated format: e.g. 63-1234567-B-07
+    parts = cleaned.split('-')
+    if len(parts) >= 3:
+        masked_number = '*' * len(parts[1])
+        suffix = '-'.join(parts[2:])
+        return f"{parts[0]}-{masked_number}-{suffix}"
+
+    # Check for space-separated format: e.g. 63 1234567 B 07
+    parts_space = cleaned.split()
+    if len(parts_space) >= 3:
+        masked_number = '*' * len(parts_space[1])
+        suffix = ' '.join(parts_space[2:])
+        return f"{parts_space[0]} {masked_number} {suffix}"
+
+    # Generic fallback for short or non-standard format
+    if len(cleaned) <= 6:
+        return '*' * len(cleaned)
+
+    mask_len = len(cleaned) - 6
+    return f"{cleaned[:2]}{'*' * mask_len}{cleaned[-4:]}"
+
 
 def generate_certificate_qr_code(certificate, request=None):
     """Generate a QR code image for a certificate pointing to the verification URL."""
@@ -96,7 +147,7 @@ def generate_verification_pdf_report(verification_log, certificate=None):
             [Paragraph("Verification Code:", label_style), Paragraph(certificate.verification_code, val_style)],
             [Paragraph("Student Name:", label_style), Paragraph(student.full_name, val_style)],
             [Paragraph("Student Number:", label_style), Paragraph(student.student_number, val_style)],
-            [Paragraph("National ID:", label_style), Paragraph(student.national_id, val_style)],
+            [Paragraph("National ID:", label_style), Paragraph(mask_national_id(student.national_id), val_style)],
             [Paragraph("Programme:", label_style), Paragraph(student.programme, val_style)],
             [Paragraph("Faculty:", label_style), Paragraph(student.faculty, val_style)],
             [Paragraph("Qualification Awarded:", label_style), Paragraph(student.qualification, val_style)],
