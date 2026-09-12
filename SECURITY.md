@@ -289,6 +289,8 @@ These decisions require team/university approval. This policy does not claim leg
 - Add rate limits for login and public verification without using anomaly scoring as the enforcement mechanism.
 - Restrict post-login redirects to safe local paths.
 
+**Implemented under Issue #13 / FR-SRCH-12:** DRF scoped throttling now limits API authentication to 5 requests per minute (`api_login`) and public verification to 30 requests per minute (`api_verify`). Automated tests verify that excess requests return HTTP 429. These application-level controls reduce automated abuse and enumeration risk but do not replace upstream proxy/WAF controls for a production deployment.
+
 ### 10.3 Authorisation controls
 
 - Ignore/reject caller-supplied Administrator or Registrar roles during self-registration.
