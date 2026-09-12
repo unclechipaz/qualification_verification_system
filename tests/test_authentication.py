@@ -2,6 +2,7 @@ import pytest
 from django.contrib.auth import get_user_model
 from django.test import Client
 from rest_framework.test import APIClient
+from django.core.cache import cache
 
 User = get_user_model()
 
@@ -104,3 +105,26 @@ class TestAuthentication:
 
         assert response.status_code == 302
         assert response.url == '/reports/dashboard/'
+    def test_api_login_rate_limit(self):
+        cache.clear()
+        client = APIClient()
+
+        for _ in range(5):
+            response = client.post(
+                '/api/login/',
+                {
+                    'username': 'wrong',
+                    'password': 'bad'
+                }
+            )
+            assert response.status_code == 401
+
+        response = client.post(
+            '/api/login/',
+            {
+                'username': 'wrong',
+                'password': 'bad'
+            }
+        )
+
+        assert response.status_code == 429

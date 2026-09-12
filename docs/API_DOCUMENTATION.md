@@ -31,6 +31,8 @@ On success, HTTP 200 returns `token`, `user` and `status: "success"`. The `user`
 
 `id`, `username`, `email`, `first_name`, `last_name`, `role`, `national_id`, `phone_number`, `organization_name`, `is_verified_employer`, `created_at`.
 
+Rate limiting applies to this endpoint. The `api_login` throttle permits 5 requests per minute per throttle identity. Requests exceeding the configured rate return HTTP 429 Too Many Requests.
+
 Invalid credentials return HTTP 401:
 
 ```json
@@ -88,6 +90,7 @@ The first certificate match is returned. There is no multiple-match selection, d
 | Matching suspended certificate | 200 | `PENDING` |
 | No matching certificate | 404 | `INVALID` |
 | Missing, empty, whitespace-only, non-string, overlength query, or malformed body | 400 | An `error` message instead of a verification result |
+| Rate limit exceeded | 429 | DRF throttling response |
 
 HTTP 200 alone does not mean a qualification is valid: inspect the body status.
 
@@ -111,6 +114,8 @@ When a certificate matches, `certificate_details` is included for active, revoke
 An invalid result omits `certificate_details`. Its fraud score may be nonzero because an unmatched identifier or the user-agent/frequency rules can add points.
 
 The endpoint currently exposes these details, including national ID, without authentication. This is a privacy limitation requiring a code change. Use demonstration records. The digest is returned from storage; the endpoint does not recompute or validate it.
+
+Rate limiting applies to this endpoint. The `api_verify` throttle permits 30 requests per minute per throttle identity. Requests exceeding the configured rate return HTTP 429 Too Many Requests.
 
 ## 3. Resource endpoints
 

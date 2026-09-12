@@ -123,6 +123,7 @@ def logout_view(request):
 # REST API Views
 class APILoginView(views.APIView):
     permission_classes = [AllowAny]
+    throttle_scope = 'api_login'
 
     def post(self, request):
         serializer = LoginSerializer(data=request.data)
@@ -165,3 +166,4 @@ class UserViewSet(viewsets.ModelViewSet):
     queryset = User.objects.all()
     serializer_class = UserSerializer
     permission_classes = [IsAdminOrRegistrar]
+

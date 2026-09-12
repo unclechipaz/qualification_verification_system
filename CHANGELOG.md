@@ -3,6 +3,13 @@
 This file records significant project changes and their integration status.
 
 ## Unreleased
+### feature/search-rate-limiting — Issue #13
+
+- Implemented scoped DRF throttling for public verification and API authentication under FR-SRCH-12.
+- Configured `api_verify` at 30 requests per minute and `api_login` at 5 requests per minute.
+- Added automated regression tests confirming requests within the configured limits are processed and excess requests return HTTP 429 Too Many Requests.
+- Confirmed the complete automated test suite passes with 25 tests.
+- Confirmed Django system checks pass and no migration changes are required.
 
 ### feature/search-v2 — Issue #9
 
