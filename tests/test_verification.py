@@ -5,6 +5,8 @@ from students.models import Student
 from qualifications.models import Qualification, Certificate
 from verification.models import VerificationLog
 from verification.views import verify_qualification
+from rest_framework.test import APIClient
+from django.core.cache import cache
 
 User = get_user_model()
 
@@ -212,3 +214,23 @@ class TestVerificationEngine:
         assert 'error' in resp.data
 
 
+    def test_api_verification_rate_limit(self):
+        cache.clear()
+        client = APIClient()
+
+        for _ in range(30):
+            response = client.post(
+                '/api/verify/',
+                {'query': 'NONEXISTENT-CERTIFICATE'},
+                format='json'
+            )
+            assert response.status_code != 429
+
+        response = client.post(
+            '/api/verify/',
+            {'query': 'NONEXISTENT-CERTIFICATE'},
+            format='json'
+        )
+
+        assert response.status_code == 429
+   

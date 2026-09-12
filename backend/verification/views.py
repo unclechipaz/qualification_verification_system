@@ -204,6 +204,7 @@ def download_verification_pdf(request, log_id):
 # REST API Endpoint for Verification
 class APIVerifyView(APIView):
     permission_classes = [permissions.AllowAny]
+    throttle_scope = 'api_verify'
 
     def post(self, request):
         if not isinstance(request.data, dict):
