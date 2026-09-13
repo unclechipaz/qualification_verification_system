@@ -10,6 +10,18 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 if str(BASE_DIR) not in sys.path:
     sys.path.insert(0, str(BASE_DIR))
 
+# Auto-sync uploaded official MSU Crest Logo image to static assets
+uploaded_logo = Path(r"C:\Users\dell\.gemini\antigravity\brain\4a9f7a07-a8b9-47de-9a89-63647266c60e\.user_uploaded\media_1789317297964.png")
+static_img_dir = BASE_DIR / "static" / "img"
+target_logo_png = static_img_dir / "msu_logo.png"
+
+if uploaded_logo.exists():
+    try:
+        static_img_dir.mkdir(parents=True, exist_ok=True)
+        shutil.copyfile(uploaded_logo, target_logo_png)
+    except Exception:
+        pass
+
 SECRET_KEY = os.environ.get('DJANGO_SECRET_KEY', 'django-insecure-msu-qvs-super-secret-key-2026-prod-ready')
 
 DEBUG = os.environ.get('DEBUG', 'False').lower() == 'true' if os.environ.get('VERCEL') == '1' else True
