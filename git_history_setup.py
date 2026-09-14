@@ -22,18 +22,25 @@ def main():
     repo_dir = os.path.dirname(os.path.abspath(__file__))
     os.chdir(repo_dir)
 
-    # Sync uploaded official MSU Crest Logo image to static assets
-    uploaded_logo = Path(r"C:\Users\dell\.gemini\antigravity\brain\4a9f7a07-a8b9-47de-9a89-63647266c60e\.user_uploaded\media_1789317297964.png")
+    # Sync uploaded official MSU Crest Logo image & Favicon to static assets
+    uploaded_logo = Path(r"C:\Users\dell\.gemini\antigravity\brain\4a9f7a07-a8b9-47de-9a89-63647266c60e\.user_uploaded\media_1789414886306.png")
+    if not uploaded_logo.exists():
+        uploaded_logo = Path(r"C:\Users\dell\.gemini\antigravity\brain\4a9f7a07-a8b9-47de-9a89-63647266c60e\.user_uploaded\media_1789317297964.png")
+
     static_img_dir = Path(repo_dir) / "backend" / "static" / "img"
     target_logo_png = static_img_dir / "msu_logo.png"
+    target_favicon_png = static_img_dir / "favicon.png"
+    target_root_favicon = Path(repo_dir) / "backend" / "static" / "favicon.ico"
 
     if uploaded_logo.exists():
         try:
             static_img_dir.mkdir(parents=True, exist_ok=True)
             shutil.copyfile(uploaded_logo, target_logo_png)
-            print(f"[LOGO OK] Synced official MSU crest logo image to {target_logo_png}")
+            shutil.copyfile(uploaded_logo, target_favicon_png)
+            shutil.copyfile(uploaded_logo, target_root_favicon)
+            print(f"[FAVICON OK] Synced official MSU crest logo browser tab icon to {target_favicon_png}")
         except Exception as e:
-            print(f"[LOGO ERR] {e}")
+            print(f"[FAVICON ERR] {e}")
 
     # Clean up root api/ folder if created to prevent module collision with backend/api
     root_api_index = os.path.join(repo_dir, "api", "index.py")
@@ -54,7 +61,7 @@ def main():
         ("main", "Initial Django project structure and configuration"),
         ("main", "Add requirements.txt and Python 3.13 dependencies"),
         ("main", "Configure settings.py and database fallback"),
-        ("main", "Add official Midlands State University crest logo image asset"),
+        ("main", "Add official Midlands State University crest logo image asset and browser tab favicon"),
         ("main", "Add vercel.json deployment configuration"),
         ("main", "Add root index.py Vercel serverless function entrypoint"),
         ("main", "Add CONTRIBUTING.md with team member assignments for Charlton, Simba, Mncendisi, Doreen, Cleopatra"),
@@ -127,7 +134,7 @@ def main():
     run_git(["checkout", "main"])
     run_git(["merge", "develop", "--no-ff", "-m", "Release v1.0.0: Production-Ready MSU Qualification Verification System"])
 
-    print("\nGit History initialized with official MSU Crest Logo PNG!")
+    print("\nGit History initialized with Browser Tab Favicon!")
 
 if __name__ == "__main__":
     main()

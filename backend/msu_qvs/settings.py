@@ -10,15 +10,22 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 if str(BASE_DIR) not in sys.path:
     sys.path.insert(0, str(BASE_DIR))
 
-# Auto-sync uploaded official MSU Crest Logo image to static assets
-uploaded_logo = Path(r"C:\Users\dell\.gemini\antigravity\brain\4a9f7a07-a8b9-47de-9a89-63647266c60e\.user_uploaded\media_1789317297964.png")
+# Auto-sync uploaded official MSU Crest Logo image & Favicon to static assets
+uploaded_logo = Path(r"C:\Users\dell\.gemini\antigravity\brain\4a9f7a07-a8b9-47de-9a89-63647266c60e\.user_uploaded\media_1789414886306.png")
+if not uploaded_logo.exists():
+    uploaded_logo = Path(r"C:\Users\dell\.gemini\antigravity\brain\4a9f7a07-a8b9-47de-9a89-63647266c60e\.user_uploaded\media_1789317297964.png")
+
 static_img_dir = BASE_DIR / "static" / "img"
 target_logo_png = static_img_dir / "msu_logo.png"
+target_favicon_png = static_img_dir / "favicon.png"
+target_root_favicon = BASE_DIR / "static" / "favicon.ico"
 
 if uploaded_logo.exists():
     try:
         static_img_dir.mkdir(parents=True, exist_ok=True)
         shutil.copyfile(uploaded_logo, target_logo_png)
+        shutil.copyfile(uploaded_logo, target_favicon_png)
+        shutil.copyfile(uploaded_logo, target_root_favicon)
     except Exception:
         pass
 
