@@ -3,6 +3,7 @@
 import os
 import sys
 
+
 def main():
     """Run administrative tasks."""
     # Add project directory to sys.path so apps can be found cleanly

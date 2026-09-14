@@ -1,12 +1,15 @@
-from django.shortcuts import render, get_object_or_404, redirect
-from django.contrib.auth.decorators import login_required
 from django.contrib import messages
+from django.contrib.auth.decorators import login_required
 from django.db.models import Q
-from rest_framework import viewsets, filters
+from django.shortcuts import redirect, render
+from rest_framework import filters, viewsets
+
 from authentication.permissions import IsAdminOrRegistrar
 from verification.utils import mask_national_id
+
 from .models import Student
 from .serializers import StudentSerializer
+
 
 # Web UI Views
 @login_required

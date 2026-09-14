@@ -1,6 +1,9 @@
 from rest_framework import serializers
+
 from verification.utils import mask_national_id
+
 from .models import Student
+
 
 class StudentSerializer(serializers.ModelSerializer):
     class Meta:

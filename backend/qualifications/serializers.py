@@ -1,6 +1,9 @@
 from rest_framework import serializers
-from .models import Qualification, Certificate
+
 from students.serializers import StudentSerializer
+
+from .models import Certificate, Qualification
+
 
 class QualificationSerializer(serializers.ModelSerializer):
     class Meta:

@@ -1,5 +1,7 @@
 # Requirements Traceability Matrix
 
+**Delivery update:** The [CI/CD delivery runbook](docs/CI_CD_DELIVERY.md) supersedes this document's earlier build-only pipeline and Docker-startup descriptions. It defines Ruff/80% coverage gates, PostgreSQL migration tests, container/persistence checks and GHCR delivery. The dated evidence below remains historical; current acceptance requires a successful run and a verified persistent deployment.
+
 ## Midlands State University Qualification Verification System
 
 | Document item | Value |

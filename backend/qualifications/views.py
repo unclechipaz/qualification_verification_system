@@ -1,12 +1,13 @@
-from django.shortcuts import render, get_object_or_404, redirect
 from django.contrib.auth.decorators import login_required
-from django.contrib import messages
-from rest_framework import viewsets, filters
+from django.shortcuts import get_object_or_404, render
+from rest_framework import filters, viewsets
+
 from authentication.permissions import IsAdminOrRegistrar
-from .models import Qualification, Certificate
-from .serializers import QualificationSerializer, CertificateSerializer
-from students.models import Student
 from verification.utils import generate_certificate_qr_code
+
+from .models import Certificate, Qualification
+from .serializers import CertificateSerializer, QualificationSerializer
+
 
 @login_required
 def qualification_list_view(request):

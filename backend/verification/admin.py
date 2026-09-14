@@ -1,5 +1,7 @@
 from django.contrib import admin
+
 from .models import VerificationLog
+
 
 @admin.register(VerificationLog)
 class VerificationLogAdmin(admin.ModelAdmin):

@@ -1,0 +1,43 @@
+services:
+  db:
+    image: postgres:16-alpine
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: ${DB_NAME:-msu_qvs_db}
+      POSTGRES_USER: ${DB_USER:-msu_user}
+      POSTGRES_PASSWORD: ${DB_PASSWORD:?Set DB_PASSWORD}
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: [CMD-SHELL, 'pg_isready -U "$$POSTGRES_USER" -d "$$POSTGRES_DB"']
+      interval: 5s
+      timeout: 5s
+      retries: 12
+
+  web:
+    image: ${QVS_IMAGE:?Set QVS_IMAGE to a tested image digest}
+    restart: unless-stopped
+    ports:
+      - "${QVS_BIND_ADDRESS:-127.0.0.1}:${QVS_PORT:-8000}:8000"
+    environment:
+      DJANGO_SETTINGS_MODULE: msu_qvs.production
+      DJANGO_SECRET_KEY: ${DJANGO_SECRET_KEY:?Set DJANGO_SECRET_KEY}
+      DJANGO_ALLOWED_HOSTS: ${DJANGO_ALLOWED_HOSTS:?Set DJANGO_ALLOWED_HOSTS}
+      DB_NAME: ${DB_NAME:-msu_qvs_db}
+      DB_USER: ${DB_USER:-msu_user}
+      DB_PASSWORD: ${DB_PASSWORD:?Set DB_PASSWORD}
+      DB_HOST: db
+      DB_PORT: "5432"
+      DJANGO_SSL_REDIRECT: ${DJANGO_SSL_REDIRECT:-true}
+      DJANGO_TRUST_PROXY_SSL_HEADER: ${DJANGO_TRUST_PROXY_SSL_HEADER:-false}
+      DJANGO_CSRF_ORIGINS: ${DJANGO_CSRF_ORIGINS:-}
+      DJANGO_CORS_ORIGINS: ${DJANGO_CORS_ORIGINS:-}
+    volumes:
+      - media_data:/app/backend/media
+    depends_on:
+      db:
+        condition: service_healthy
+
+volumes:
+  postgres_data:
+  media_data:

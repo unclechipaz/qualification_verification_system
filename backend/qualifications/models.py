@@ -1,10 +1,13 @@
-import uuid
+import base64
 import hashlib
 import io
-import base64
+import uuid
+
 import qrcode
 from django.db import models
+
 from students.models import Student
+
 
 class Qualification(models.Model):
     title = models.CharField(max_length=200, help_text="e.g. Bachelor of Science Honors Degree in Computer Science")

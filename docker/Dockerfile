@@ -1,29 +1,25 @@
 FROM python:3.13-slim
 
-# Set environment variables
-ENV PYTHONDONTWRITEBYTECODE=1
-ENV PYTHONUNBUFFERED=1
-
+ENV PYTHONDONTWRITEBYTECODE=1 PYTHONUNBUFFERED=1
 WORKDIR /app
+COPY requirements.txt ./
+RUN pip install --no-cache-dir -r requirements.txt
 
-# Install system dependencies for Pillow, ReportLab, PostgreSQL
-RUN apt-get update && apt-get install -y --no-install-recommends \
-    build-essential \
-    libpq-dev \
-    libjpeg-dev \
-    zlib1g-dev \
-    netcat-openbsd \
-    && rm -rf /var/lib/apt/lists/*
+COPY backend/ ./backend/
+COPY docker/entrypoint.sh ./docker/entrypoint.sh
+# Collect public assets without injecting deployment secrets into the build.
+RUN python backend/manage.py collectstatic --noinput --settings=msu_qvs.settings \
+    && useradd --uid 10001 --create-home qvs \
+    && mkdir -p /app/backend/media \
+    && chown -R qvs:qvs /app/backend/media \
+    && chmod +x /app/docker/entrypoint.sh
 
-# Install Python requirements
-COPY requirements.txt /app/
-RUN pip install --upgrade pip && pip install --no-cache-dir -r requirements.txt
-
-# Copy project source
-COPY . /app/
-
+ARG APP_REVISION=unknown
+ENV APP_REVISION=${APP_REVISION} DJANGO_SETTINGS_MODULE=msu_qvs.production
+LABEL org.opencontainers.image.revision=${APP_REVISION}
+USER qvs
 EXPOSE 8000
-
-# Set entrypoint
-RUN chmod +x /app/docker/entrypoint.sh
+HEALTHCHECK --interval=10s --timeout=5s --start-period=60s --retries=6 \
+    CMD python -c "from urllib.request import urlopen; urlopen('http://127.0.0.1:8000/health/ready/', timeout=3)"
 ENTRYPOINT ["/app/docker/entrypoint.sh"]
+CMD ["gunicorn", "--chdir", "backend", "msu_qvs.wsgi:application", "--bind", "0.0.0.0:8000", "--workers", "2", "--access-logfile", "-", "--error-logfile", "-"]

@@ -5,58 +5,186 @@ permissions:
 
 on:
   push:
-    branches: [ main, develop, 'feature/*' ]
+    branches: [main, develop, 'feature/**', 'fix/**', 'docs/**']
   pull_request:
-    branches: [ main, develop ]
+    branches: [main, develop]
+
+concurrency:
+  group: qvs-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: false
 
 jobs:
-  test-and-lint:
-    name: Build & Test (Python 3.13)
+  quality:
+    name: Tests and quality gates (PostgreSQL)
     runs-on: ubuntu-latest
-
+    timeout-minutes: 15
+    services:
+      postgres:
+        image: postgres:16-alpine
+        env:
+          POSTGRES_DB: qvs_ci
+          POSTGRES_USER: qvs_ci
+          POSTGRES_PASSWORD: ci-only-disposable-password
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd "pg_isready -U qvs_ci -d qvs_ci"
+          --health-interval 5s --health-timeout 5s --health-retries 12
+    env:
+      DB_ENGINE: django.db.backends.postgresql
+      DB_NAME: qvs_ci
+      DB_USER: qvs_ci
+      DB_PASSWORD: ci-only-disposable-password
+      DB_HOST: 127.0.0.1
+      DB_PORT: '5432'
     steps:
-      - name: Checkout Code
-        uses: actions/checkout@v7
-
-      - name: Set up Python 3.13
-        uses: actions/setup-python@v7
+      - uses: actions/checkout@v7
+        with:
+          persist-credentials: false
+      - uses: actions/setup-python@v7
         with:
           python-version: '3.13'
-          cache: 'pip'
-
-      - name: Install Dependencies
+          cache: pip
+          cache-dependency-path: 'requirements*.txt'
+      - name: Install pinned dependencies
         run: |
-          python -m pip install --upgrade pip
-          python -m pip install -r requirements.txt
-
-      - name: Run Django System Checks
+          mkdir -p artifacts
+          python -m pip install -r requirements-dev.txt
+          python -m pip check
+      - name: Static analysis and coding standards
+        run: ruff check backend tests scripts index.py --output-format=json > artifacts/ruff.json
+      - name: System and committed migration checks
         run: |
           python backend/manage.py check
-
-      - name: Check for Missing Migrations
-        run: |
           python backend/manage.py makemigrations --check --dry-run
-
-      - name: Run Pytest Suite
-        run: |
-          python -m pytest --tb=short
+          python backend/manage.py migrate --noinput
+      - name: Tests and 80 percent statement coverage gate
+        run: >-
+          python -m pytest --cov=backend --cov-report=term-missing
+          --cov-report=xml:artifacts/coverage.xml --cov-report=html:artifacts/htmlcov
+          --cov-report=json:artifacts/coverage.json --junitxml=artifacts/pytest.xml
+      - name: Retain quality evidence
+        if: always()
+        uses: actions/upload-artifact@v7
+        with:
+          name: quality-evidence-${{ github.sha }}
+          path: artifacts/
+          retention-days: 14
 
   docker-build:
-    name: Build Docker Container Image
-    needs: test-and-lint
+    name: Container build and deployment smoke tests
+    needs: quality
     runs-on: ubuntu-latest
-
+    timeout-minutes: 20
+    env:
+      QVS_IMAGE: msu-qvs:ci
+      DJANGO_ALLOWED_HOSTS: localhost,127.0.0.1
+      # HTTP is only used on the disposable runner's loopback interface.
+      DJANGO_SSL_REDIRECT: 'false'
+      COMPOSE_PROJECT_NAME: qvs-ci
+      COMPOSE_FILE: docker/compose.production.yml
     steps:
-      - name: Checkout Code
-        uses: actions/checkout@v7
-
-      - name: Set up Docker Buildx
-        uses: docker/setup-buildx-action@v4
-
-      - name: Build Docker Image
+      - uses: actions/checkout@v7
+        with:
+          persist-credentials: false
+      - uses: docker/setup-buildx-action@v4
+      - name: Create disposable deployment secrets
         run: |
-          docker build -t msu-qvs:latest -f docker/Dockerfile .
-
-      - name: Verify Docker Image Build
+          mkdir -p artifacts
+          python - <<'PY'
+          import os, secrets
+          with open(os.environ['GITHUB_ENV'], 'a') as output:
+              for name in ['DJANGO_SECRET_KEY', 'DB_PASSWORD']:
+                  value = secrets.token_urlsafe(64)
+                  print(f'::add-mask::{value}')
+                  output.write(f'{name}={value}\n')
+          PY
+      - name: Build the candidate image
+        run: >-
+          docker build --build-arg APP_REVISION="$GITHUB_SHA"
+          --label "org.opencontainers.image.source=$GITHUB_SERVER_URL/$GITHUB_REPOSITORY"
+          -t "$QVS_IMAGE" -f docker/Dockerfile .
+      - name: Check production security settings
+        run: >-
+          docker compose run --rm --no-deps -e DJANGO_SSL_REDIRECT=true
+          --entrypoint python web backend/manage.py check --deploy --fail-level ERROR 2>&1 | tee artifacts/deploy-check.log
+      - name: Deploy the candidate to a disposable PostgreSQL stack
+        run: docker compose up -d --wait --wait-timeout 180
+      - name: Verify health, revision and static assets
+        run: >-
+          python scripts/smoke_test.py --base-url http://127.0.0.1:8000
+          --expected-revision "$GITHUB_SHA" > artifacts/container-smoke.json
+      - name: Verify persistence and absence of seeded accounts
         run: |
-          docker images | grep msu-qvs
+          docker compose exec -T -e PERSISTENCE_PROBE_MODE=write web python backend/manage.py shell < scripts/container_persistence_probe.py
+          docker compose up -d --force-recreate --wait --wait-timeout 180
+          docker compose exec -T -e PERSISTENCE_PROBE_MODE=check web python backend/manage.py shell < scripts/container_persistence_probe.py
+          python scripts/smoke_test.py --base-url http://127.0.0.1:8000 --expected-revision "$GITHUB_SHA" > artifacts/container-recreated.json
+      - name: Save the tested image for delivery
+        if: github.event_name == 'push' && (github.ref == 'refs/heads/develop' || github.ref == 'refs/heads/main')
+        run: docker save "$QVS_IMAGE" | gzip > artifacts/tested-image.tar.gz
+      - name: Retain the exact tested image
+        if: github.event_name == 'push' && (github.ref == 'refs/heads/develop' || github.ref == 'refs/heads/main')
+        uses: actions/upload-artifact@v7
+        with:
+          name: tested-image-${{ github.sha }}
+          path: artifacts/tested-image.tar.gz
+          compression-level: 0
+          retention-days: 1
+          if-no-files-found: error
+      - name: Capture deployment logs
+        if: always()
+        run: docker compose logs --no-color > artifacts/compose.log 2>&1
+      - name: Retain deployment evidence
+        if: always()
+        uses: actions/upload-artifact@v7
+        with:
+          name: deployment-evidence-${{ github.sha }}
+          path: |
+            artifacts/*.json
+            artifacts/*.log
+          retention-days: 14
+      - name: Remove the disposable CI stack
+        if: always()
+        run: docker compose down --volumes --remove-orphans
+
+  publish:
+    name: Deliver the tested image to GHCR
+    needs: docker-build
+    if: github.event_name == 'push' && (github.ref == 'refs/heads/develop' || github.ref == 'refs/heads/main')
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    permissions:
+      contents: read
+      packages: write
+    steps:
+      - uses: actions/download-artifact@v8
+        with:
+          name: tested-image-${{ github.sha }}
+          path: delivery
+      - name: Load the tested image
+        run: gunzip -c delivery/tested-image.tar.gz | docker load
+      - name: Sign in to GHCR
+        env:
+          GHCR_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: printf '%s' "$GHCR_TOKEN" | docker login ghcr.io --username "$GITHUB_ACTOR" --password-stdin
+      - name: Publish commit and branch tags and record the digest
+        run: |
+          image="ghcr.io/${GITHUB_REPOSITORY,,}"
+          docker tag msu-qvs:ci "$image:sha-$GITHUB_SHA"
+          docker tag msu-qvs:ci "$image:$GITHUB_REF_NAME"
+          docker push "$image:sha-$GITHUB_SHA"
+          docker push "$image:$GITHUB_REF_NAME"
+          digest=$(docker inspect --format '{{index .RepoDigests 0}}' "$image:sha-$GITHUB_SHA")
+          printf 'QVS_IMAGE=%s\nAPP_REVISION=%s\n' "$digest" "$GITHUB_SHA" > delivery/release.env
+          printf 'Delivered image: `%s`\n\nSource commit: `%s`\n' "$digest" "$GITHUB_SHA" >> "$GITHUB_STEP_SUMMARY"
+      - name: Retain release manifest
+        uses: actions/upload-artifact@v7
+        with:
+          name: release-manifest-${{ github.sha }}
+          path: delivery/release.env
+          retention-days: 90
+          if-no-files-found: error
+      - name: Sign out of GHCR
+        if: always()
+        run: docker logout ghcr.io

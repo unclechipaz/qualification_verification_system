@@ -1,17 +1,17 @@
-from django.shortcuts import render, redirect
-from django.contrib.auth import login, logout, authenticate
+from django.contrib import messages
+from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.password_validation import validate_password
 from django.core.exceptions import ValidationError
-from django.contrib import messages
-from django.contrib.auth.decorators import login_required
+from django.shortcuts import redirect, render
 from django.utils.http import url_has_allowed_host_and_scheme
 from rest_framework import status, views, viewsets
-from rest_framework.response import Response
 from rest_framework.authtoken.models import Token
-from rest_framework.permissions import AllowAny, IsAuthenticated
+from rest_framework.permissions import AllowAny
+from rest_framework.response import Response
+
 from .models import User
-from .serializers import UserSerializer, RegisterSerializer, LoginSerializer
 from .permissions import IsAdminOrRegistrar
+from .serializers import LoginSerializer, RegisterSerializer, UserSerializer
 
 PUBLIC_REGISTRATION_ROLES = {
     User.Role.EMPLOYER,

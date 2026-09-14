@@ -1,20 +1,22 @@
 import csv
 from datetime import timedelta
-from django.shortcuts import render, redirect
-from django.contrib.auth.decorators import login_required
+
 from django.contrib import messages
-from django.utils import timezone
-from django.http import HttpResponse
+from django.contrib.auth.decorators import login_required
 from django.db.models import Count
-from rest_framework.views import APIView
+from django.http import HttpResponse
+from django.shortcuts import redirect, render
+from django.utils import timezone
 from rest_framework.response import Response
-from authentication.permissions import IsAdminOrRegistrar
-from authentication.models import User
-from students.models import Student
-from qualifications.models import Certificate
-from verification.models import VerificationLog
-from employers.models import Employer
+from rest_framework.views import APIView
+
 from audit.models import AuditLog
+from authentication.permissions import IsAdminOrRegistrar
+from employers.models import Employer
+from qualifications.models import Certificate
+from students.models import Student
+from verification.models import VerificationLog
+
 
 @login_required
 def main_dashboard_view(request):

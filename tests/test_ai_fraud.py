@@ -1,8 +1,11 @@
-import pytest
 import datetime
-from students.models import Student
-from qualifications.models import Qualification, Certificate
+
+import pytest
+
 from ai_fraud.detector import AIFraudDetector
+from qualifications.models import Certificate, Qualification
+from students.models import Student
+
 
 @pytest.mark.django_db
 class TestAIFraudDetection:

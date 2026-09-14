@@ -1,6 +1,8 @@
 import os
 import sys
 
+from django.core.wsgi import get_wsgi_application
+
 # Configure Python path for Vercel Serverless environment
 current_dir = os.path.dirname(os.path.abspath(__file__))
 backend_dir = os.path.join(current_dir, 'backend')
@@ -12,6 +14,5 @@ if current_dir not in sys.path:
 
 os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'msu_qvs.settings')
 
-from django.core.wsgi import get_wsgi_application
 
 app = get_wsgi_application()

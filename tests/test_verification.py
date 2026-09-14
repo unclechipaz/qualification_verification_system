@@ -1,12 +1,13 @@
 import datetime
+
 import pytest
 from django.contrib.auth import get_user_model
-from students.models import Student
-from qualifications.models import Qualification, Certificate
-from verification.models import VerificationLog
-from verification.views import verify_qualification
-from rest_framework.test import APIClient
 from django.core.cache import cache
+from rest_framework.test import APIClient
+
+from qualifications.models import Certificate, Qualification
+from students.models import Student
+from verification.views import verify_qualification
 
 User = get_user_model()
 
@@ -130,8 +131,8 @@ class TestVerificationEngine:
 
     def test_preserves_valid_searches_and_aliases(self, sample_data):
         """Valid queries, surrounding spaces, and supported aliases must be preserved."""
-        from rest_framework.test import APIClient
         from django.test import Client
+        from rest_framework.test import APIClient
         api_client = APIClient()
         web_client = Client()
 

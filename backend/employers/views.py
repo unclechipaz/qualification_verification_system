@@ -1,11 +1,14 @@
-from django.shortcuts import render, redirect
-from django.contrib.auth.decorators import login_required
 from django.contrib import messages
+from django.contrib.auth.decorators import login_required
+from django.shortcuts import redirect, render
 from rest_framework import viewsets
-from authentication.permissions import IsEmployer, IsAdminOrRegistrar
+
+from authentication.permissions import IsAdminOrRegistrar
 from verification.models import VerificationLog
+
 from .models import Employer
 from .serializers import EmployerSerializer
+
 
 @login_required
 def employer_portal_view(request):

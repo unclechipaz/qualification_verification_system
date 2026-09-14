@@ -1,8 +1,8 @@
 import pytest
 from django.contrib.auth import get_user_model
+from django.core.cache import cache
 from django.test import Client
 from rest_framework.test import APIClient
-from django.core.cache import cache
 
 User = get_user_model()
 
