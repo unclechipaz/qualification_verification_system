@@ -1,5 +1,7 @@
 # MSU QVS: Installation and Deployment Guide
 
+**Delivery update:** Use the [current delivery runbook](CI_CD_DELIVERY.md) for production Docker deployment. Install `requirements-dev.txt` to run tests. Docker startup now applies committed migrations and does not seed demo accounts automatically. The historical baseline and environment notes below predate this change.
+
 **Source baseline:** `0faeb043c8c2c602008b1c7e1d45eb29efdcd098`, reviewed on 10 September 2026.
 
 These instructions support local development and demonstration. They do not establish that the current application or hosted deployment is suitable for production.
@@ -10,7 +12,7 @@ These instructions support local development and demonstration. They do not esta
 - Internet access to obtain dependencies. The templates also load frontend assets from external CDNs.
 - Docker with Compose only if using the container option.
 
-The dependency declaration is `Django>=5.0,<5.2`, not an unrestricted Django 5.x range. Other requirements use minimum versions rather than a complete lock file. Django's [5.1 documentation](https://docs.djangoproject.com/en/5.1/howto/deployment/checklist/) identifies that release series as unsupported; a tested dependency upgrade is part of the remaining deployment work.
+The dependency declaration is `Django 5.2 LTS`, not an unrestricted Django 5.x range. Other requirements use minimum versions rather than a complete lock file. Django's [5.1 documentation](https://docs.djangoproject.com/en/5.1/howto/deployment/checklist/) identifies that release series as unsupported; a tested dependency upgrade is part of the remaining deployment work.
 
 ## Windows PowerShell
 
@@ -20,7 +22,7 @@ Open PowerShell in the directory where you want the project. These commands use 
 git clone --branch develop https://github.com/unclechipaz/qualification_verification_system.git
 cd qualification_verification_system
 py -3.13 -m venv venv
-.\venv\Scripts\python.exe -m pip install -r requirements.txt
+.\venv\Scripts\python.exe -m pip install -r requirements-dev.txt
 $env:DB_ENGINE = "django.db.backends.sqlite3"
 $env:DB_NAME = Join-Path $env:USERPROFILE "msu-qvs-demo.sqlite3"
 $env:DJANGO_SECRET_KEY = & .\venv\Scripts\python.exe -c "from django.core.management.utils import get_random_secret_key; print(get_random_secret_key())"
@@ -39,7 +41,7 @@ Open `http://127.0.0.1:8000/`. Stop the server with **Ctrl+C**. When opening a n
 git clone --branch develop https://github.com/unclechipaz/qualification_verification_system.git
 cd qualification_verification_system
 python3.13 -m venv venv
-venv/bin/python -m pip install -r requirements.txt
+venv/bin/python -m pip install -r requirements-dev.txt
 export DB_ENGINE=django.db.backends.sqlite3
 export DB_NAME="$HOME/msu-qvs-demo.sqlite3"
 export DJANGO_SECRET_KEY="$(venv/bin/python -c 'from django.core.management.utils import get_random_secret_key; print(get_random_secret_key())')"
@@ -95,9 +97,9 @@ From the repository root:
 docker compose -f docker/docker-compose.yml up --build
 ```
 
-The supplied configuration starts PostgreSQL 16 and Django's development server on port 8000. The entrypoint waits for the database port when `DB_HOST=db`, runs `makemigrations` and `migrate`, and invokes `seed_db` before the server command.
+The development configuration starts PostgreSQL 16 and Django's development server on port 8000. Compose waits for the database health check. The entrypoint applies committed migrations and then starts the server.
 
-Consequently, restarting the web container repeats the seed command's password resets and sample-log insertion. The Compose file includes demonstration database credentials, publishes port 5432 and mounts the source directory. This is a development configuration.
+Demo seeding is now an explicit command: `docker compose -f docker/docker-compose.yml exec web python backend/manage.py seed_db`. Run it only against disposable data. The development Compose file includes demonstration database credentials and mounts the source directory; the database port is not published. Use the separate production Compose file for persistent deployment.
 
 Stop containers while preserving their database volume with:
 
@@ -122,25 +124,11 @@ Do not add `--volumes` unless you intend to delete the demonstration database vo
 
 ## Deployment status and remaining work
 
-The repository contains a Docker image definition and a Vercel entry point (`index.py` with `vercel.json`). There is no included Render/Railway configuration, TLS reverse proxy, automated backup system, image publication or Actions deployment step.
+The [CI/CD delivery runbook](CI_CD_DELIVERY.md) is the current guide for the production Docker image, persistent PostgreSQL/media volumes, Gunicorn, WhiteNoise static assets and GHCR image delivery. Runtime dependencies are pinned on Django 5.2 LTS, and startup applies committed migrations without generating migrations or seeding demo accounts.
 
-Before a production deployment, the team needs to:
+The team must still provision and verify its persistent HTTPS deployment, retain backup/restore evidence and resolve the application privacy/authorisation and verification gaps identified in the technical report. Use synthetic data until those controls are verified. The existing Vercel entry point remains separate; its SQLite `/tmp` copy does not provide a shared durable registry.
 
-1. Upgrade to a supported dependency set and verify it with the application.
-2. Implement effective production settings for debug, allowed hosts, CORS, secrets and HTTPS/cookies.
-3. Address the documented privacy and authorisation gaps, using synthetic data until those controls are verified.
-4. Configure persistent database/media storage and tested backup/restore procedures. The Vercel SQLite branch can copy a database into `/tmp`; that local copy does not provide a shared durable registry.
-5. Remove demo seeding from deployment startup and use an appropriate application server.
-6. Configure and verify static-file serving. `collectstatic` gathers assets; it does not serve them. See [Django static-file deployment](https://docs.djangoproject.com/en/5.1/howto/static-files/deployment/).
-7. Correct QR-link generation for the selected environment and test the real deployed routes, data persistence and access boundaries.
-
-A prospective WSGI start command, after those configuration changes, is:
-
-```bash
-gunicorn --chdir backend msu_qvs.wsgi:application --bind 0.0.0.0:8000
-```
-
-This command alone does not resolve deployment gaps. Follow the [Django deployment checklist](https://docs.djangoproject.com/en/5.1/howto/deployment/checklist/) and run `python backend/manage.py check --deploy` against the intended production settings.
+Record the approved commit, published image digest, deployed URL and successful post-deployment checks. A successful Docker build or disposable CI deployment does not establish permanent service availability.
 
 ## Troubleshooting
 

@@ -1,12 +1,13 @@
 import datetime
-from django.core.management.base import BaseCommand
-from django.core.management import call_command
+
 from django.contrib.auth import get_user_model
-from students.models import Student
-from qualifications.models import Qualification, Certificate
+from django.core.management import call_command
+from django.core.management.base import BaseCommand
+
 from employers.models import Employer
+from qualifications.models import Certificate, Qualification
+from students.models import Student
 from verification.models import VerificationLog
-from audit.models import AuditLog
 
 User = get_user_model()
 

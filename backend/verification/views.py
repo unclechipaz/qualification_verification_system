@@ -1,14 +1,20 @@
-from django.shortcuts import render, get_object_or_404, redirect
-from django.http import HttpResponse, Http404
-from django.db.models import Q
-from rest_framework.views import APIView
+from django.http import HttpResponse
+from django.shortcuts import get_object_or_404, render
+from rest_framework import permissions, status
 from rest_framework.response import Response
-from rest_framework import status, permissions
-from qualifications.models import Certificate
-from students.models import Student
-from .models import VerificationLog
-from .utils import generate_verification_pdf_report, generate_certificate_qr_code, mask_national_id, is_national_id_format
+from rest_framework.views import APIView
+
 from ai_fraud.detector import AIFraudDetector
+from qualifications.models import Certificate
+
+from .models import VerificationLog
+from .utils import (
+    generate_certificate_qr_code,
+    generate_verification_pdf_report,
+    is_national_id_format,
+    mask_national_id,
+)
+
 
 def get_client_ip(request):
     x_forwarded_for = request.META.get('HTTP_X_FORWARDED_FOR')

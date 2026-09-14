@@ -1,15 +1,13 @@
-import os
 import io
 import re
+
 import qrcode
-from PIL import Image as PILImage
 from django.core.files.base import ContentFile
-from django.conf import settings
-from reportlab.lib.pagesizes import letter, A4
-from reportlab.pdfgen import canvas
 from reportlab.lib import colors
-from reportlab.platypus import SimpleDocTemplate, Paragraph, Spacer, Table, TableStyle, Image as RLImage
-from reportlab.lib.styles import getSampleStyleSheet, ParagraphStyle
+from reportlab.lib.pagesizes import letter
+from reportlab.lib.styles import ParagraphStyle, getSampleStyleSheet
+from reportlab.platypus import Paragraph, SimpleDocTemplate, Spacer, Table, TableStyle
+
 
 def is_national_id_format(value: str) -> bool:
     """

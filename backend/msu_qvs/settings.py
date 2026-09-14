@@ -1,6 +1,6 @@
 import os
-import sys
 import shutil
+import sys
 from pathlib import Path
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
@@ -12,9 +12,11 @@ if str(BASE_DIR) not in sys.path:
 
 SECRET_KEY = os.environ.get('DJANGO_SECRET_KEY', 'django-insecure-msu-qvs-super-secret-key-2026-prod-ready')
 
-DEBUG = os.environ.get('DEBUG', 'False').lower() == 'true' if os.environ.get('VERCEL') == '1' else True
+DEBUG = os.environ.get('DEBUG', 'False' if os.environ.get('VERCEL') == '1' else 'True').lower() == 'true'
 
-ALLOWED_HOSTS = ['.vercel.app', 'localhost', '127.0.0.1', '*']
+ALLOWED_HOSTS = [host.strip() for host in os.environ.get(
+    'DJANGO_ALLOWED_HOSTS', '.vercel.app,localhost,127.0.0.1'
+).split(',') if host.strip()]
 
 # Application definition
 INSTALLED_APPS = [
@@ -134,6 +136,10 @@ USE_TZ = True
 STATIC_URL = '/static/'
 STATIC_ROOT = BASE_DIR / 'staticfiles'
 STATICFILES_DIRS = [BASE_DIR / 'static']
+STORAGES = {
+    'default': {'BACKEND': 'django.core.files.storage.FileSystemStorage'},
+    'staticfiles': {'BACKEND': 'whitenoise.storage.CompressedStaticFilesStorage'},
+}
 
 # Media files (Certificates, QR Codes, Reports)
 MEDIA_URL = '/media/'

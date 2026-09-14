@@ -1,12 +1,13 @@
-from django.urls import path, include
+from django.urls import include, path
 from rest_framework.routers import DefaultRouter
-from authentication.views import APILoginView, APIRegisterView, UserViewSet
-from students.views import StudentViewSet
-from qualifications.views import QualificationViewSet, CertificateViewSet
-from verification.views import APIVerifyView
-from employers.views import EmployerViewSet
-from reports.views import APIReportsView
+
 from ai_fraud.views import AIFraudAnalyticsAPIView
+from authentication.views import APILoginView, APIRegisterView, UserViewSet
+from employers.views import EmployerViewSet
+from qualifications.views import CertificateViewSet, QualificationViewSet
+from reports.views import APIReportsView
+from students.views import StudentViewSet
+from verification.views import APIVerifyView
 
 router = DefaultRouter()
 router.register(r'users', UserViewSet, basename='api_users')

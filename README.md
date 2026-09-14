@@ -2,6 +2,8 @@
 
 An academic Django application for registering graduate records, looking up certificates, recording verification activity and demonstrating employer screening. It provides server-rendered web pages and a Django REST Framework API.
 
+**Current delivery configuration:** See the [CI/CD delivery runbook](docs/CI_CD_DELIVERY.md) for the quality gates, PostgreSQL integration tests, production Docker settings, GHCR publication and deployment/evidence steps. The historical baseline below predates this delivery change.
+
 **Documentation baseline:** source commit `0faeb043c8c2c602008b1c7e1d45eb29efdcd098`, reviewed on 10 September 2026. This baseline contains the CI repairs in PR #4, the authentication fixes in PR #6 and the documentation-branch synchronisation in PR #7. It is a development baseline; these merges do not establish production readiness or confirm the state of the hosted application.
 
 ## Implemented capabilities
@@ -9,7 +11,7 @@ An academic Django application for registering graduate records, looking up cert
 | Requirement | Current behaviour |
 | --- | --- |
 | Register qualifications and certifications | Administrator/registrar users can create student records. Qualification definitions and certificates are separate records managed through the API or suitably authorised Django administration accounts. Creating a student through the web form does not issue a certificate. |
-| Search and retrieve records | Verification searches certificate number, verification code, student number, national ID and then a partial name. It returns the first matching certificate. Administrative student and certificate API lists support `?search=`. |
+| Search and retrieve records | Public verification accepts exact certificate numbers or verification codes. Administrators/registrars can additionally search student numbers, National IDs and partial names. Name searches return the first matching certificate. Administrative student and certificate API lists support `?search=`. |
 | Verify qualifications | The result follows the stored certificate status: `ACTIVE → VERIFIED`, `REVOKED → REVOKED`, and `SUSPENDED → PENDING`; an unmatched identifier produces `INVALID`. The application generates QR images and PDF verification reports. |
 | Maintain verification history | `VerificationLog` stores searches, results and heuristic risk scores. Employers can view/export their own logged checks. `AuditLog` records selected HTTP write requests and response status codes. |
 
@@ -19,21 +21,21 @@ An academic Django application for registering graduate records, looking up cert
 - The field named `digital_signature_hash` stores a SHA-256 digest of selected certificate fields. There is no signing key or verification-time digest comparison. The generated PDF is not cryptographically signed or protected against editing.
 - `AIFraudDetector` is a fixed-rule scoring component, not a trained machine-learning model. A score is an indicator for review, not proof of fraud or an enforcement mechanism.
 - The web result template does not yet display `PENDING` separately, and certificate pages/PDF downloads have access-control limitations described in the manuals.
-- Deployment settings, dependency support, persistent storage and remaining controls need further work. See [deployment limitations](docs/INSTALLATION_GUIDE.md#deployment-status-and-remaining-work).
+- Persistent hosted deployment and remaining application controls need further work. See [deployment limitations](docs/INSTALLATION_GUIDE.md#deployment-status-and-remaining-work).
 
 ## Technology
 
 | Area | Repository configuration |
 | --- | --- |
 | Runtime | Python 3.13 in GitHub Actions and the Docker image |
-| Framework | `Django>=5.0,<5.2`; other dependency ranges are in [requirements.txt](requirements.txt) |
+| Framework | Django 5.2 LTS; runtime dependencies are pinned in [requirements.txt](requirements.txt) |
 | Web interface | Django templates, Bootstrap 5.3, JavaScript |
 | Database | SQLite by default; PostgreSQL selected using `DB_ENGINE`. Compose uses PostgreSQL 16. |
 | Outputs | ReportLab PDF reports, qrcode/Pillow QR images, CSV exports |
-| Verification | pytest and pytest-django; Django checks and migration-drift checks |
-| Packaging | Docker development configuration and a Vercel WSGI entry point |
+| Verification | pytest/coverage and Ruff; Django checks and PostgreSQL migration execution |
+| Packaging | Development and production Docker configurations; existing Vercel WSGI entry point |
 
-The Actions workflow checks Django configuration, checks for missing migrations, runs pytest and builds a Docker image. It does not currently lint the source, publish that image, deploy the application, or run a security/coverage gate.
+The Actions workflow enforces Ruff checks and 80% statement coverage, applies migrations and runs pytest on PostgreSQL, then builds and smoke-tests a production Docker stack. Successful pushes to `develop`/`main` publish the tested image to GHCR. Persistent deployment requires promoting its digest with the [delivery runbook](docs/CI_CD_DELIVERY.md).
 
 ## Getting started
 
@@ -59,6 +61,7 @@ These assignments describe responsibilities, not verified contribution counts.
 | Cleopatra | Audit Trail and QA/Documentation Lead | Requirement 4: activity history, tests, manuals and diagrams |
 
 ## Documentation
+- [CI/CD delivery, deployment and evidence](docs/CI_CD_DELIVERY.md)
 - [Changelog](CHANGELOG.md)
 - [Architecture and implementation limits](docs/ARCHITECTURE.md)
 - [API reference](docs/API_DOCUMENTATION.md)

@@ -1,5 +1,13 @@
 # Changelog
 
+## Unreleased - CI/CD delivery
+
+- Add Ruff and 80% statement coverage gates, PostgreSQL migration/integration testing and retained quality artifacts.
+- Add production Gunicorn/WhiteNoise container settings, health/revision endpoints, persistent Compose deployment and container recreation checks.
+- Deliver the tested image to GHCR on successful develop/main push runs with commit/branch tags and a digest manifest.
+- Upgrade to Django 5.2 LTS and pin runtime/developer dependencies; remove automatic migration generation and demo seeding from container startup.
+- Add deployment and evidence instructions. These entries describe the proposed change; release execution and permanent deployment require their own evidence.
+
 This file records significant project changes and their integration status.
 
 ## Unreleased

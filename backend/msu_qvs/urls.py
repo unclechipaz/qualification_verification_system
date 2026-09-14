@@ -1,9 +1,13 @@
-from django.contrib import admin
-from django.urls import path, include
 from django.conf import settings
 from django.conf.urls.static import static
+from django.contrib import admin
+from django.urls import include, path
+
+from .health import live, ready
 
 urlpatterns = [
+    path('health/live/', live, name='health_live'),
+    path('health/ready/', ready, name='health_ready'),
     path('admin/', admin.site.urls),
     
     # UI Web Navigation

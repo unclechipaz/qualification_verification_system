@@ -1,5 +1,7 @@
 from django.contrib import admin
-from .models import Qualification, Certificate
+
+from .models import Certificate, Qualification
+
 
 @admin.register(Qualification)
 class QualificationAdmin(admin.ModelAdmin):

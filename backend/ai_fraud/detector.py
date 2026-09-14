@@ -1,7 +1,10 @@
 from datetime import timedelta
+
 from django.utils import timezone
+
 from qualifications.models import Certificate
 from verification.models import VerificationLog
+
 
 class AIFraudDetector:
     """

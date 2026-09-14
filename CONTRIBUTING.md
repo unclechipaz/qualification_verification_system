@@ -67,16 +67,18 @@ The repository's `git_history_setup.py` is not an installation or contribution s
 For application changes, run these commands from the repository root using the installed virtual environment:
 
 ```bash
+python -m pip install -r requirements-dev.txt
+ruff check backend tests scripts index.py
 python backend/manage.py check
 python backend/manage.py makemigrations --check --dry-run
-python -m pytest --tb=short
+python -m pytest --cov=backend --cov-report=term-missing
 ```
 
-Use the interpreter paths in the [Installation Guide](docs/INSTALLATION_GUIDE.md) if the environment is not activated. Add migrations only when model changes require them. The pytest configuration uses `--nomigrations`, so passing tests do not replace migration checks or testing migration application.
+Use the interpreter paths in the [Installation Guide](docs/INSTALLATION_GUIDE.md) if the environment is not activated. Add migrations only when model changes require them. Tests now apply committed migrations. GitHub additionally runs migration application and the integration suite against PostgreSQL; retain both drift and execution evidence.
 
 For documentation changes, verify relative links, route names, commands, role permissions, model fields and examples against the source. Record any steps you did not run.
 
-The current Actions workflow runs on pushes to `main`, `develop` and `feature/*`, and on pull requests targeting `main` or `develop`. A push to `docs/*` alone does not trigger that workflow. Despite the workflow's name and job identifier, it contains no lint, coverage, security scanning, deployment or image-publishing step.
+The Actions workflow runs on main/develop and feature/fix/docs branch pushes and on PRs into main/develop. Ruff and 80% coverage gates precede container deployment checks. Only successful main/develop push runs publish the tested image. See the [delivery runbook](docs/CI_CD_DELIVERY.md) for retained evidence and persistent deployment. Security acceptance and branch protection still require separate review.
 
 ## Pull request and review
 
@@ -86,4 +88,4 @@ The current Actions workflow runs on pushes to `main`, `develop` and `feature/*`
 4. Address comments and conflicts, then merge once the team's review requirements are met.
 5. Confirm the destination contains the changes and keep documentation aligned with the merged code.
 
-Do not commit demonstration databases, generated media, passwords, tokens or virtual environments. The current ignore file does not exclude SQLite databases, so check staged files explicitly. Report contributions accurately, including any AI assistance required by the assignment's rules.
+Do not commit demonstration databases, generated media, passwords, tokens or virtual environments. SQLite files and generated evidence are ignored; already tracked historical databases still require care. Check staged files explicitly. Report contributions accurately, including any AI assistance required by the assignment's rules.
